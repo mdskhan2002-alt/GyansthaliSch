@@ -1240,3 +1240,117 @@ input[type="checkbox"] {
   height: 18px;
   cursor: pointer;
 }
+
+/* --- Social Media Badges & Buttons --- */
+.social-icons-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.social-icons-strip a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+.social-icons-strip a:hover {
+  background: #ffffff;
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.social-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+.social-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+.social-btn.fb { background: #1877f2; color: #fff; }
+.social-btn.fb:hover { background: #145dbf; transform: translateY(-2px); }
+.social-btn.ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; }
+.social-btn.ig:hover { opacity: 0.95; transform: translateY(-2px); }
+.social-btn.yt { background: #ff0000; color: #fff; }
+.social-btn.yt:hover { background: #cc0000; transform: translateY(-2px); }
+.social-btn.tw { background: #0f1419; color: #fff; }
+.social-btn.tw:hover { background: #000; transform: translateY(-2px); }
+.social-btn.wa { background: #25d366; color: #fff; }
+.social-btn.wa:hover { background: #1ebc59; transform: translateY(-2px); }
+
+.footer-social-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.footer-social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #93c5fd;
+  transition: all 0.2s ease;
+}
+.footer-social-icons a:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+/* --- Print Styles for Official Payment Slips --- */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .no-print, header, nav, .topbar, footer, .sidebar, .dash-header, .toolbar, .modal-actions, button {
+    display: none !important;
+  }
+  #paymentSlipModal, #adminPaymentSlipModal, #printableSlip, #adminPrintableSlip,
+  #paymentSlipModal *, #adminPaymentSlipModal *, #printableSlip *, #adminPrintableSlip * {
+    visibility: visible;
+  }
+  #paymentSlipModal, #adminPaymentSlipModal {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: transparent !important;
+    display: block !important;
+  }
+  .modal-card {
+    border: none !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #printableSlip, #adminPrintableSlip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px !important;
+  }
+}

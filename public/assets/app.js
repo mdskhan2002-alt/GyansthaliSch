@@ -386,6 +386,22 @@ function viewApplicationModal(id) {
 // ============================================================
 // 2. PAYMENTS HUB & AUDIT LOGS
 // ============================================================
+// Indian Rupees Number to Words Converter
+function numberToWordsINR(num) {
+  const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+  const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+  const n = ('000000000' + Number(num)).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+  if (!n) return '';
+  let str = '';
+  str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
+  str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
+  str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
+  str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
+  str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Rupees' : 'Rupees';
+  return str.trim();
+}
+
 async function renderPaymentsHub() {
   const tb = document.getElementById('tablePaymentsHub');
   if (!tb) return;
@@ -403,8 +419,57 @@ async function renderPaymentsHub() {
       <td>${esc(p.payment_method)}</td>
       <td><span class="badge badge-paid">${esc(p.status)}</span></td>
       <td><small>${esc(p.paid_at ? p.paid_at.slice(0, 10) : 'Recent')}</small></td>
+      <td>
+        <button class="btn btn-sm outline" onclick="openAdminPaymentSlip('${esc(p.receipt_no || p.payment_no || p.id)}')">🖨️ Slip</button>
+      </td>
     </tr>
-  `).join('') || '<tr><td colspan="8" style="text-align:center;color:#64748b;padding:20px;">No payments recorded.</td></tr>';
+  `).join('') || '<tr><td colspan="9" style="text-align:center;color:#64748b;padding:20px;">No payments recorded.</td></tr>';
+}
+
+async function openAdminPaymentSlip(identifier) {
+  const modal = document.getElementById('adminPaymentSlipModal');
+  if (!modal) return;
+
+  const res = await api(`/api/payments/${encodeURIComponent(identifier)}/receipt`);
+  if (res.ok && res.data) {
+    const r = res.data;
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set('admSlipReceiptNo', r.receipt_no || identifier);
+    set('admSlipDate', r.date ? r.date.slice(0, 10) : '22 Feb 2026');
+    set('admSlipTxnId', r.transaction_id || 'TXN_ONLINE_8002856232');
+    set('admSlipMode', r.payment_method || 'Online (UPI / QR / NetBanking)');
+    set('admSlipStudentName', r.student_name || 'Ananya Kumari');
+    set('admSlipAppNo', r.application_no || 'APP-2026-003');
+    set('admSlipParentName', r.parent_name || 'Rajesh Sharma');
+    set('admSlipAdmNo', r.admission_no || 'GIS-004');
+    set('admSlipPhone', r.parent_phone || '8002856232');
+    set('admSlipCourse', r.course_name || 'Pre-Primary (Nursery, LKG, UKG)');
+    set('admSlipTotalAmount', `₹${Number(r.amount).toLocaleString('en-IN')}.00`);
+
+    const words = numberToWordsINR(r.amount);
+    set('admSlipWords', words ? `${words} Only` : 'Three Thousand Five Hundred Rupees Only');
+
+    const itemsBody = document.getElementById('admSlipItemsBody');
+    if (itemsBody && Array.isArray(r.breakdown)) {
+      itemsBody.innerHTML = r.breakdown.filter(i => i.amount > 0).map((item, idx) => `
+        <tr style="border-bottom:1px solid #e2e8f0;">
+          <td style="padding:8px 10px;">${idx + 1}</td>
+          <td style="padding:8px 10px;">${esc(item.item)}</td>
+          <td style="padding:8px 10px;text-align:right;">₹${Number(item.amount).toLocaleString('en-IN')}.00</td>
+        </tr>
+      `).join('') + `
+        <tr style="border-bottom:1px solid #cbd5e1;font-weight:700;background:#f8fafc;">
+          <td style="padding:8px 10px;" colspan="2">TOTAL AMOUNT RECEIVED (PAID IN FULL)</td>
+          <td style="padding:8px 10px;text-align:right;color:#0b4f9c;font-size:15px;">₹${Number(r.amount).toLocaleString('en-IN')}.00</td>
+        </tr>
+      `;
+    }
+  }
+  modal.classList.remove('hidden');
+}
+
+function printAdminSlip() {
+  window.print();
 }
 
 async function renderAuditLogs() {
@@ -676,11 +741,135 @@ function openAddClassModal() {
   const sections = prompt('Sections:', 'A, B') || 'A, B';
   const teacher = prompt('Teacher in charge:', 'Faculty Member') || 'Faculty Member';
 
-  (async () => {
-    await api('/api/classes', { method: 'POST', body: JSON.stringify({ name, sections, teacher_incharge: teacher }) });
-    toast('Class added');
-    renderClasses();
-  })();
+    (async () => {
+      await api('/api/classes', { method: 'POST', body: JSON.stringify({ name, sections, teacher_incharge: teacher }) });
+      toast('Class added');
+      renderClasses();
+    })();
+}
+
+// ============================================================
+// FACULTY & EDUCATORS (Live Editing & Homepage Sync)
+// ============================================================
+let cachedFaculty = [];
+
+async function loadFaculty() {
+  const res = await api('/api/faculty');
+  if (res.ok && Array.isArray(res.data) && res.data.length > 0) {
+    cachedFaculty = res.data;
+  } else {
+    cachedFaculty = [
+      { id: 1, name: 'Dr. R. K. Choudhary', designation: 'Principal & Academic Director', qualification: 'M.Sc., M.Ed., Ph.D.', experience: '18+ Years Exp.', subjects: 'Academic Leadership, Physics', avatar_emoji: '👨‍🏫' },
+      { id: 2, name: 'Sunil Kumar Verma', designation: 'Senior Faculty - STEM & Maths', qualification: 'M.Sc. (Mathematics), B.Ed.', experience: '12+ Years Exp.', subjects: 'Mathematics, Science (VI-X)', avatar_emoji: '👨‍🏫' },
+      { id: 3, name: 'Priya Kumari', designation: 'Faculty - Languages & Social Sciences', qualification: 'M.A. (English), B.Ed.', experience: '8+ Years Exp.', subjects: 'English, Social Science', avatar_emoji: '👩‍🏫' },
+      { id: 4, name: 'Amit Kumar Singh', designation: 'Physical Education & Sports Coach', qualification: 'B.P.Ed., Certified Coach', experience: '7+ Years Exp.', subjects: 'Physical Education, Athletics, Yoga', avatar_emoji: '🏃‍♂️' },
+      { id: 5, name: 'Suman Sharma', designation: 'Head - Co-Curricular & Arts', qualification: 'M.F.A.', experience: '9+ Years Exp.', subjects: 'Visual Arts, Craft & Design', avatar_emoji: '🎨' },
+      { id: 6, name: 'Rekha Devi', designation: 'Primary Wing Coordinator', qualification: 'D.El.Ed., NTT Certified', experience: '10+ Years Exp.', subjects: 'Foundational Stage (Nursery - Grade II)', avatar_emoji: '👩‍🏫' }
+    ];
+  }
+
+  // 1. Update Homepage (index.html)
+  const grid = document.getElementById('facultyGrid');
+  if (grid) {
+    grid.innerHTML = cachedFaculty.map(f => `
+      <div class="teacher">
+        <div class="teacher-photo">${f.avatar_emoji || '👨‍🏫'}</div>
+        <h3>${esc(f.name)}</h3>
+        <p><b>${esc(f.designation)}</b></p>
+        <small>${esc([f.qualification, f.experience].filter(Boolean).join(' • '))}</small>
+      </div>
+    `).join('');
+  }
+
+  // 2. Update Admin Dashboard (admin.html)
+  const tb = document.getElementById('tableFacultyAdmin');
+  if (tb) {
+    tb.innerHTML = cachedFaculty.map(f => `
+      <tr>
+        <td style="font-size:24px;text-align:center;">${f.avatar_emoji || '👨‍🏫'}</td>
+        <td><b>${esc(f.name)}</b></td>
+        <td>${esc(f.designation)}</td>
+        <td>${esc(f.qualification || '—')}</td>
+        <td>${esc(f.experience || '—')}</td>
+        <td><small>${esc(f.subjects || 'General Academics')}</small></td>
+        <td>
+          <button class="btn btn-sm outline" onclick="openEditFacultyModal(${f.id})">✏️ Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteFaculty(${f.id})" style="margin-left:4px;">🗑️ Delete</button>
+        </td>
+      </tr>
+    `).join('') || '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">No educators registered.</td></tr>';
+  }
+}
+
+function openAddFacultyModal() {
+  const title = document.getElementById('facultyModalTitle');
+  if (title) title.textContent = 'Add New Faculty / Educator';
+  const idEl = document.getElementById('facultyEditId');
+  if (idEl) idEl.value = '';
+  const n = document.getElementById('facultyName'); if (n) n.value = '';
+  const em = document.getElementById('facultyEmoji'); if (em) em.value = '👨‍🏫';
+  const d = document.getElementById('facultyDesignation'); if (d) d.value = '';
+  const q = document.getElementById('facultyQualification'); if (q) q.value = '';
+  const exp = document.getElementById('facultyExperience'); if (exp) exp.value = '';
+  const s = document.getElementById('facultySubjects'); if (s) s.value = '';
+  const modal = document.getElementById('facultyModal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function openEditFacultyModal(id) {
+  const f = cachedFaculty.find(x => x.id === id);
+  if (!f) return alert('Educator record not found');
+
+  const title = document.getElementById('facultyModalTitle');
+  if (title) title.textContent = 'Edit Faculty / Educator';
+  const idEl = document.getElementById('facultyEditId');
+  if (idEl) idEl.value = f.id;
+  const n = document.getElementById('facultyName'); if (n) n.value = f.name;
+  const em = document.getElementById('facultyEmoji'); if (em) em.value = f.avatar_emoji || '👨‍🏫';
+  const d = document.getElementById('facultyDesignation'); if (d) d.value = f.designation;
+  const q = document.getElementById('facultyQualification'); if (q) q.value = f.qualification || '';
+  const exp = document.getElementById('facultyExperience'); if (exp) exp.value = f.experience || '';
+  const s = document.getElementById('facultySubjects'); if (s) s.value = f.subjects || '';
+  const modal = document.getElementById('facultyModal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+async function submitFacultySave() {
+  const id = document.getElementById('facultyEditId')?.value;
+  const name = document.getElementById('facultyName')?.value.trim();
+  const avatar_emoji = document.getElementById('facultyEmoji')?.value || '👨‍🏫';
+  const designation = document.getElementById('facultyDesignation')?.value.trim();
+  const qualification = document.getElementById('facultyQualification')?.value.trim() || '';
+  const experience = document.getElementById('facultyExperience')?.value.trim() || '';
+  const subjects = document.getElementById('facultySubjects')?.value.trim() || '';
+
+  if (!name || !designation) {
+    return alert('Please enter both Educator Name and Designation');
+  }
+
+  const payload = { name, avatar_emoji, designation, qualification, experience, subjects };
+  const method = id ? 'PUT' : 'POST';
+  const url = id ? `/api/faculty/${id}` : '/api/faculty';
+
+  const res = await api(url, { method, body: JSON.stringify(payload) });
+  if (res.ok) {
+    toast(id ? 'Educator updated successfully' : 'Educator added successfully');
+    closeModal('facultyModal');
+    loadFaculty();
+  } else {
+    alert(res.data?.error || 'Failed to save educator');
+  }
+}
+
+async function deleteFaculty(id) {
+  if (!confirm('Are you sure you want to remove this educator from Gyansthali International School?')) return;
+  const res = await api(`/api/faculty/${id}`, { method: 'DELETE' });
+  if (res.ok) {
+    toast('Educator removed successfully');
+    loadFaculty();
+  } else {
+    alert(res.data?.error || 'Failed to remove educator');
+  }
 }
 
 // User Roles & Permissions (Editable)
@@ -975,6 +1164,7 @@ function init() {
   renderClasses();
   renderRoles();
   renderContacts();
+  loadFaculty();
 }
 
 if (document.readyState === 'loading') {

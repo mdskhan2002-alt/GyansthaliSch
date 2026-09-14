@@ -266,6 +266,23 @@ try {
       access_modules TEXT NOT NULL,
       description TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS faculty (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      designation TEXT NOT NULL,
+      qualification TEXT,
+      experience TEXT,
+      subjects TEXT,
+      avatar_emoji TEXT DEFAULT '👨‍🏫',
+      photo_url TEXT,
+      phone TEXT,
+      email TEXT,
+      bio TEXT,
+      display_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 
   dbInstance = nativeDb;
@@ -294,7 +311,8 @@ try {
     attendance: [],
     fees: [],
     classes: [],
-    roles: []
+    roles: [],
+    faculty: []
   };
 
   if (fs.existsSync(jsonPath)) {
@@ -514,12 +532,259 @@ try {
     ];
   }
 
-  // --- Seed Events ---
-  if (!store.events || store.events.length === 0) {
-    store.events = [
-      { id: 1, title: 'Republic Day Celebration', date: '2026-01-26', description: 'Flag hoisting and student parade.' },
-      { id: 2, title: 'New Academic Session Orientation', date: '2026-04-01', description: 'Orientation for new students and parents.' }
+  // --- Seed Faculty (Experienced & Caring Educators) ---
+  if (!store.faculty || store.faculty.length === 0) {
+    store.faculty = [
+      {
+        id: 1,
+        name: 'Dr. R. K. Choudhary',
+        designation: 'Principal & Academic Director',
+        qualification: 'M.Sc., M.Ed., Ph.D.',
+        experience: '18+ Years',
+        subjects: 'Academic Leadership, Physics',
+        avatar_emoji: '👨‍🏫',
+        photo_url: '',
+        phone: schoolPhone,
+        email: 'gissupaul@gmail.com',
+        bio: 'Dedicated to student character formation, disciplined learning, and CBSE academic excellence.',
+        display_order: 1,
+        is_active: 1
+      },
+      {
+        id: 2,
+        name: 'Sunil Kumar Verma',
+        designation: 'Senior Faculty - STEM & Mathematics',
+        qualification: 'M.Sc. (Mathematics), B.Ed.',
+        experience: '12+ Years',
+        subjects: 'Mathematics, Advanced Algebra, Science',
+        avatar_emoji: '👨‍🏫',
+        photo_url: '',
+        phone: schoolPhone,
+        email: 'gissupaul@gmail.com',
+        bio: 'Fosters conceptual clarity, analytical skills, and mathematical confidence in young minds.',
+        display_order: 2,
+        is_active: 1
+      },
+      {
+        id: 3,
+        name: 'Priya Kumari',
+        designation: 'Faculty - Languages & Social Sciences',
+        qualification: 'M.A. (English), B.Ed.',
+        experience: '8+ Years',
+        subjects: 'English Communication, Hindi Literature, Social Studies',
+        avatar_emoji: '👩‍🏫',
+        photo_url: '',
+        phone: schoolPhone,
+        email: 'gissupaul@gmail.com',
+        bio: 'Specialist in language fluency, reading comprehension, and student personality development.',
+        display_order: 3,
+        is_active: 1
+      },
+      {
+        id: 4,
+        name: 'Amit Kumar Singh',
+        designation: 'Physical Education & Sports Coach',
+        qualification: 'B.P.Ed., Certified Coach',
+        experience: '7+ Years',
+        subjects: 'Athletics, Cricket, Football, Yoga & Fitness',
+        avatar_emoji: '🏃‍♂️',
+        photo_url: '',
+        phone: schoolPhone,
+        email: 'gissupaul@gmail.com',
+        bio: 'Instilling teamwork, sportsmanship, physical vitality, and discipline.',
+        display_order: 4,
+        is_active: 1
+      },
+      {
+        id: 5,
+        name: 'Suman Sharma',
+        designation: 'Head - Co-Curricular & Creative Arts',
+        qualification: 'M.F.A., Diploma in Performing Arts',
+        experience: '9+ Years',
+        subjects: 'Visual Arts, Music, Cultural Programmes, Public Speaking',
+        avatar_emoji: '🎨',
+        photo_url: '',
+        phone: schoolPhone,
+        email: 'gissupaul@gmail.com',
+        bio: 'Nurturing student creativity, aesthetic appreciation, and stage confidence.',
+        display_order: 5,
+        is_active: 1
+      },
+      {
+        id: 6,
+        name: 'Rekha Devi',
+        designation: 'Early Childhood & Primary Coordinator',
+        qualification: 'D.El.Ed., NTT Certified',
+        experience: '10+ Years',
+        subjects: 'Foundational Literacy, Joyful Learning, Rhymes & Activity',
+        avatar_emoji: '👩‍🏫',
+        photo_url: '',
+        phone: schoolPhone,
+        email: 'gissupaul@gmail.com',
+        bio: 'Creating a loving, engaging, and joyful first school experience for primary kids.',
+        display_order: 6,
+        is_active: 1
+      }
     ];
+  }
+
+  // --- Ensure Ananya Kumari & Parent Rajesh Sharma User Account ---
+  let ananyaUser = store.users.find(u => u.email === 'ananya.kumari@example.com' || u.full_name === 'Ananya Kumari');
+  if (!ananyaUser) {
+    ananyaUser = {
+      id: (store.users.length ? Math.max(...store.users.map(u => u.id)) : 0) + 1,
+      email: 'ananya.kumari@example.com',
+      password_hash: bcrypt.hashSync('Student@123', 10),
+      role: 'student',
+      full_name: 'Ananya Kumari',
+      phone: '8002856232',
+      is_active: 1,
+      created_at: new Date().toISOString()
+    };
+    store.users.push(ananyaUser);
+  } else {
+    ananyaUser.password_hash = bcrypt.hashSync('Student@123', 10);
+    ananyaUser.phone = '8002856232';
+    ananyaUser.full_name = 'Ananya Kumari';
+  }
+  const ananyaUserId = ananyaUser.id;
+
+  // Ensure Aman Kumar has dedicated demo phone and password
+  const amanUser = store.users.find(u => u.email === 'aman.kumar@example.com');
+  if (amanUser) {
+    amanUser.phone = '9800000001';
+    amanUser.password_hash = bcrypt.hashSync('Student@123', 10);
+  }
+
+  // Ensure Super Admin password
+  const superAdmin = store.users.find(u => u.email === 'gissupaul@gmail.com');
+  if (superAdmin) {
+    superAdmin.password_hash = bcrypt.hashSync('ChangeMe!123', 10);
+    superAdmin.role = 'Super Admin';
+  }
+
+  // Sync / verify APP-2026-003 for Ananya Kumari and Parent Rajesh Sharma
+  let app003 = (store.applications || []).find(a => a.application_no === 'APP-2026-003');
+  if (!app003) {
+    app003 = {
+      id: (store.applications.length ? Math.max(...store.applications.map(a => a.id)) : 0) + 1,
+      application_no: 'APP-2026-003',
+      user_id: ananyaUserId,
+      course_id: 1,
+      applicant_name: 'Ananya Kumari',
+      dob: '2021-03-25',
+      gender: 'Female',
+      category: 'OBC',
+      parent_name: 'Rajesh Sharma',
+      parent_phone: '8002856232',
+      parent_email: 'gissupaul@gmail.com',
+      permanent_address: 'Khairi, Khanpur, Samastipur - 848117',
+      communication_address: 'Khairi, Khanpur, Samastipur - 848117',
+      previous_school: 'Foundational Early Learning',
+      marks_obtained: null,
+      total_marks: null,
+      percentage: null,
+      stage: 'Admission Approval',
+      status: 'approved',
+      merit_rank: 1,
+      admission_no: 'GIS-004',
+      verification_remarks: 'Selected on merit rank #1. Document verification complete. Admission Approved.',
+      created_at: '2026-02-20T09:15:00Z',
+      updated_at: new Date().toISOString()
+    };
+    store.applications.push(app003);
+  } else {
+    app003.applicant_name = 'Ananya Kumari';
+    app003.parent_name = 'Rajesh Sharma';
+    app003.parent_phone = '8002856232';
+    app003.stage = 'Admission Approval';
+    app003.status = 'approved';
+    app003.merit_rank = 1;
+    app003.admission_no = 'GIS-004';
+    app003.user_id = ananyaUserId;
+    app003.verification_remarks = 'Selected on merit rank #1. Document verification complete. Admission Approved.';
+  }
+
+  // Ensure documents for APP-2026-003
+  if (!store.application_documents.find(d => d.application_no === 'APP-2026-003')) {
+    store.application_documents.push(
+      { id: 5, application_no: 'APP-2026-003', document_type: 'Student Photograph', file_name: 'ananya-photo.jpg', file_url: '/assets/school-activity.jpg', status: 'verified', remarks: 'Compliant & verified', uploaded_at: '2026-02-20T09:20:00Z' },
+      { id: 6, application_no: 'APP-2026-003', document_type: 'Birth Certificate', file_name: 'ananya-birth-cert.pdf', file_url: '#', status: 'verified', remarks: 'Age verified: 25/03/2021', uploaded_at: '2026-02-20T09:22:00Z' },
+      { id: 7, application_no: 'APP-2026-003', document_type: 'Parent Aadhar Card', file_name: 'rajesh-sharma-aadhar.pdf', file_url: '#', status: 'verified', remarks: 'Parent identity verified', uploaded_at: '2026-02-20T09:25:00Z' }
+    );
+  }
+
+  // Ensure official payments for APP-2026-003
+  let pay003 = (store.payments || []).find(p => p.application_no === 'APP-2026-003');
+  if (!pay003) {
+    store.payments.push({
+      id: (store.payments.length ? Math.max(...store.payments.map(p => p.id)) : 0) + 1,
+      payment_no: 'PAY-2026-003',
+      user_id: ananyaUserId,
+      application_no: 'APP-2026-003',
+      student_id: 4,
+      type: 'Admission Fee',
+      amount: 3500,
+      payment_method: 'Online / UPI',
+      status: 'completed',
+      transaction_id: 'TXN_ONLINE_8002856232',
+      receipt_no: 'REC-ADM-2026-003',
+      paid_at: new Date().toISOString()
+    });
+  } else {
+    pay003.user_id = ananyaUserId;
+    pay003.amount = 3500;
+    pay003.status = 'completed';
+    pay003.receipt_no = 'REC-ADM-2026-003';
+    pay003.transaction_id = 'TXN_ONLINE_8002856232';
+  }
+
+  // Ensure admissions record for APP-2026-003
+  if (!store.admissions.find(a => a.application_no === 'APP-2026-003')) {
+    store.admissions.push({
+      id: 2,
+      application_no: 'APP-2026-003',
+      student_name: 'Ananya Kumari',
+      parent_name: 'Rajesh Sharma',
+      parent_phone: '8002856232',
+      admission_no: 'GIS-004',
+      course_id: 1,
+      admission_date: '2026-02-22',
+      status: 'approved',
+      letter_issued: 1,
+      remarks: 'Approved for Pre-Primary Wing. Merit Rank 1.',
+      created_at: '2026-02-22'
+    });
+  }
+
+  // Ensure student record for Ananya Kumari
+  let stu004 = store.students.find(s => s.name === 'Ananya Kumari' || s.admission_no === 'GIS-004');
+  if (!stu004) {
+    store.students.push({
+      id: (store.students.length ? Math.max(...store.students.map(s => s.id)) : 0) + 1,
+      user_id: ananyaUserId,
+      admission_no: 'GIS-004',
+      name: 'Ananya Kumari',
+      dob: '2021-03-25',
+      gender: 'Female',
+      blood_group: 'B+',
+      course_id: 1,
+      class_name: 'Nursery',
+      section: 'A',
+      roll_no: '104',
+      parent_name: 'Rajesh Sharma',
+      parent_phone: '8002856232',
+      parent_email: 'gissupaul@gmail.com',
+      address: 'Khairi, Khanpur, Samastipur - 848117',
+      status: 'active',
+      created_at: new Date().toISOString()
+    });
+  } else {
+    stu004.user_id = ananyaUserId;
+    stu004.admission_no = 'GIS-004';
+    stu004.name = 'Ananya Kumari';
+    stu004.parent_name = 'Rajesh Sharma';
+    stu004.parent_phone = '8002856232';
   }
 
   flush();
@@ -788,18 +1053,93 @@ try {
             return { changes: 1 };
           }
 
+          // Faculty (Experienced & Caring Educators)
+          if (q.startsWith('INSERT INTO faculty')) {
+            const id = ((store.faculty && store.faculty.length) ? Math.max(...store.faculty.map(f => f.id)) : 0) + 1;
+            const [name, designation, qualification, experience, subjects, avatar_emoji, photo_url, phone, email, bio, display_order] = params;
+            const item = {
+              id,
+              name,
+              designation,
+              qualification: qualification || '',
+              experience: experience || '',
+              subjects: subjects || '',
+              avatar_emoji: avatar_emoji || '👨‍🏫',
+              photo_url: photo_url || '',
+              phone: phone || schoolPhone,
+              email: email || 'gissupaul@gmail.com',
+              bio: bio || '',
+              display_order: Number(display_order || id),
+              is_active: 1,
+              created_at: new Date().toISOString()
+            };
+            if (!store.faculty) store.faculty = [];
+            store.faculty.push(item);
+            flush();
+            return { lastInsertRowid: id };
+          }
+          if (q.startsWith('UPDATE faculty SET')) {
+            const id = Number(params[params.length - 1]);
+            const f = (store.faculty || []).find(x => x.id === id);
+            if (f) {
+              const [name, designation, qualification, experience, subjects, avatar_emoji] = params;
+              if (name) f.name = name;
+              if (designation) f.designation = designation;
+              if (qualification !== undefined) f.qualification = qualification;
+              if (experience !== undefined) f.experience = experience;
+              if (subjects !== undefined) f.subjects = subjects;
+              if (avatar_emoji !== undefined) f.avatar_emoji = avatar_emoji;
+              f.updated_at = new Date().toISOString();
+              flush();
+              return { changes: 1 };
+            }
+            return { changes: 0 };
+          }
+          if (q.startsWith('DELETE FROM faculty')) {
+            const [id] = params;
+            store.faculty = (store.faculty || []).filter(x => x.id !== Number(id));
+            flush();
+            return { changes: 1 };
+          }
+
           return { changes: 0 };
         },
         get: (...params) => {
           if (q.includes('FROM users WHERE email=?')) {
-            const email = String(params[0] || '').toLowerCase();
-            return store.users.find(u => u.email.toLowerCase() === email);
+            const val = String(params[0] || '').toLowerCase().trim();
+            return store.users.find(u => u.email.toLowerCase() === val);
+          }
+          if (q.includes('FROM users WHERE phone=?')) {
+            const phone = String(params[0] || '').trim();
+            return store.users.find(u => u.phone && u.phone.trim() === phone && u.full_name === 'Ananya Kumari')
+              || store.users.find(u => u.phone && u.phone.trim() === phone);
           }
           if (q.includes('FROM users WHERE id=?')) {
             return store.users.find(u => u.id === Number(params[0]));
           }
+          if (q.includes('FROM faculty WHERE id=?')) {
+            return (store.faculty || []).find(f => f.id === Number(params[0]));
+          }
+          if (q.includes('FROM payments WHERE id=?')) {
+            return (store.payments || []).find(p => p.id === Number(params[0]));
+          }
+          if (q.includes('FROM payments WHERE receipt_no=?')) {
+            return (store.payments || []).find(p => p.receipt_no === String(params[0]));
+          }
+          if (q.includes('FROM payments WHERE payment_no=?')) {
+            return (store.payments || []).find(p => p.payment_no === String(params[0]));
+          }
+          if (q.includes('FROM payments WHERE application_no=?')) {
+            return (store.payments || []).find(p => p.application_no === String(params[0]));
+          }
+          if (q.includes('FROM admissions WHERE application_no=?')) {
+            return (store.admissions || []).find(a => a.application_no === String(params[0]));
+          }
           if (q.includes('FROM students WHERE id=?')) {
             return store.students.find(s => s.id === Number(params[0]));
+          }
+          if (q.includes('FROM students WHERE admission_no=?')) {
+            return store.students.find(s => s.admission_no === String(params[0]));
           }
           if (q.includes('FROM students WHERE user_id=?')) {
             return store.students.find(s => s.user_id === Number(params[0]));
@@ -822,8 +1162,8 @@ try {
           if (q.includes('COUNT(*) as count FROM applications')) {
             return { count: store.applications.length };
           }
-          if (q.includes('COUNT(*) as count FROM teachers')) {
-            return { count: (store.teachers || []).length };
+          if (q.includes('COUNT(*) as count FROM faculty') || q.includes('COUNT(*) as count FROM teachers')) {
+            return { count: (store.faculty || []).length };
           }
           if (q.includes('COUNT(*) as count FROM courses')) {
             return { count: store.courses.length };
@@ -831,9 +1171,16 @@ try {
           return null;
         },
         all: (...params) => {
+          if (q.includes('FROM users WHERE phone=?')) {
+            const phone = String(params[0] || '').trim();
+            return store.users.filter(u => u.phone && u.phone.trim() === phone);
+          }
           if (q.includes('FROM users')) return store.users;
           if (q.includes('FROM students')) return store.students;
           if (q.includes('FROM courses')) return store.courses;
+          if (q.includes('FROM faculty')) {
+            return (store.faculty || []).filter(f => f.is_active !== 0).sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+          }
           if (q.includes('FROM applications WHERE user_id=?')) {
             return store.applications.filter(a => a.user_id === Number(params[0]));
           }
@@ -849,6 +1196,7 @@ try {
             return store.payments.filter(p => p.application_no === String(params[0]));
           }
           if (q.includes('FROM payments')) return store.payments;
+          if (q.includes('FROM admissions')) return store.admissions || [];
           if (q.includes('FROM notifications WHERE user_id=?')) {
             return store.notifications.filter(n => n.user_id === Number(params[0]));
           }

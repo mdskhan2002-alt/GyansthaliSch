@@ -369,12 +369,33 @@
     </div>
   </div>
 
-  <!-- TAB 13: FACULTY & TEACHERS -->
+  <!-- TAB 13: FACULTY & EDUCATORS (LIVE EDITING) -->
   <div id="teachers" class="tab">
-    <div class="toolbar">
-      <button class="btn primary" onclick="addTeacher()">+ Add Faculty Member</button>
+    <div class="panel" style="margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h3 style="margin:0;">Experienced & Caring Educators Management</h3>
+          <p style="margin:4px 0 0;font-size:13.5px;color:#64748b;">Live editing of teachers and academic leadership. Any additions, updates, or removals reflect immediately on the school homepage.</p>
+        </div>
+        <button class="btn primary" onclick="openAddFacultyModal()">+ Add New Educator</button>
+      </div>
     </div>
-    <div id="teacherCards" class="teacher-grid"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th width="60">Photo</th>
+            <th>Educator Name</th>
+            <th>Designation / Role</th>
+            <th>Qualification</th>
+            <th>Experience</th>
+            <th>Subjects Handled</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableFacultyAdmin"></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- TAB 14: QR ATTENDANCE -->
@@ -403,6 +424,7 @@
       <div style="display:flex;gap:12px;margin-bottom:15px;">
         <select id="reportStudent" style="max-width:300px;">
           <option value="Aman Kumar — Class VIII-A (GIS-001)">Aman Kumar — Class VIII-A (GIS-001)</option>
+          <option value="Ananya Kumari — Nursery-A (GIS-004)">Ananya Kumari — Nursery-A (GIS-004)</option>
           <option value="Priya Kumari — Class VIII-A (GIS-002)">Priya Kumari — Class VIII-A (GIS-002)</option>
           <option value="Rahul Raj — Class V-B (GIS-003)">Rahul Raj — Class V-B (GIS-003)</option>
         </select>
@@ -428,6 +450,7 @@
             <th>Method</th>
             <th>Status</th>
             <th>Date</th>
+            <th>Slip / Receipt</th>
           </tr>
         </thead>
         <tbody id="tablePaymentsHub"></tbody>
@@ -644,6 +667,160 @@
   </div>
 </div>
 
+<!-- Faculty Member Add/Edit Modal -->
+<div class="modal-overlay hidden" id="facultyModal">
+  <div class="modal-card" style="max-width:580px;">
+    <h3 id="facultyModalTitle">Add New Faculty / Educator</h3>
+    <input type="hidden" id="facultyEditId" value="">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <label><small><b>Educator Full Name *:</b></small></label>
+        <input id="facultyName" placeholder="e.g. Dr. R. K. Choudhary" required>
+      </div>
+      <div>
+        <label><small><b>Avatar Emoji *:</b></small></label>
+        <select id="facultyEmoji">
+          <option value="👨‍🏫">👨‍🏫 Teacher (Male)</option>
+          <option value="👩‍🏫">👩‍🏫 Teacher (Female)</option>
+          <option value="🏃‍♂️">🏃‍♂️ Sports Coach</option>
+          <option value="🎨">🎨 Arts & Music</option>
+          <option value="💻">💻 Computer Lab</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:10px;">
+      <label><small><b>Designation / Role *:</b></small></label>
+      <input id="facultyDesignation" placeholder="e.g. Senior Faculty - STEM & Maths" required>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+      <div>
+        <label><small><b>Qualifications:</b></small></label>
+        <input id="facultyQualification" placeholder="e.g. M.Sc., B.Ed.">
+      </div>
+      <div>
+        <label><small><b>Teaching Experience:</b></small></label>
+        <input id="facultyExperience" placeholder="e.g. 10+ Years">
+      </div>
+    </div>
+    <div style="margin-top:10px;">
+      <label><small><b>Subjects & Classes Handled:</b></small></label>
+      <input id="facultySubjects" placeholder="e.g. Mathematics, Science (Classes VI-X)">
+    </div>
+    <div class="modal-actions">
+      <button class="btn outline" onclick="closeModal('facultyModal')">Cancel</button>
+      <button class="btn primary" onclick="submitFacultySave()">Save Educator</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Official Payment Slip Modal -->
+<div class="modal-overlay hidden" id="adminPaymentSlipModal">
+  <div class="modal-card" style="max-width:760px;padding:0;overflow:hidden;border:2px solid #0b4f9c;">
+    <div id="adminPrintableSlip" style="padding:28px 32px;background:#fff;color:#0f172a;position:relative;">
+      <!-- Watermark -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:75px;font-weight:900;color:rgba(11,79,156,0.04);pointer-events:none;white-space:nowrap;user-select:none;">
+        GYANSTHALI
+      </div>
+
+      <!-- School Header -->
+      <div style="display:flex;align-items:center;gap:16px;border-bottom:2px solid #0b4f9c;padding-bottom:14px;margin-bottom:16px;">
+        <img src="assets/logo.svg" alt="Gyansthali Crest" style="width:72px;height:72px;">
+        <div style="flex:1;">
+          <h2 style="margin:0;color:#0b4f9c;font-size:22px;letter-spacing:0.5px;">GYANSTHALI INTERNATIONAL SCHOOL</h2>
+          <div style="font-size:12px;font-weight:600;color:#64748b;margin-top:2px;">
+            Recognized English Medium Co-Educational Institution • CBSE Curriculum Pattern
+          </div>
+          <div style="font-size:12px;color:#334155;margin-top:2px;">
+            📍 Khairi, P.S. Khanpur, District Samastipur, Bihar - 848117
+          </div>
+          <div style="font-size:12px;color:#334155;">
+            📞 +91 80028 56232 &nbsp;|&nbsp; ✉️ gissupaul@gmail.com
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <span style="background:#e0f2fe;color:#0369a1;font-weight:800;padding:4px 10px;border-radius:6px;font-size:11px;">OFFICIAL RECEIPT</span>
+          <div style="font-size:11px;color:#64748b;margin-top:4px;">School Audit Copy</div>
+        </div>
+      </div>
+
+      <!-- Title Bar -->
+      <div style="background:#0b4f9c;color:#fff;text-align:center;padding:7px 12px;border-radius:6px;font-weight:700;font-size:13.5px;letter-spacing:0.5px;margin-bottom:16px;">
+        OFFICIAL ADMISSION FEE PAYMENT RECEIPT / SLIP
+      </div>
+
+      <!-- Details Grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:13px;background:#f8fafc;padding:14px 18px;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:16px;">
+        <div><b>Receipt No:</b> <span id="admSlipReceiptNo">REC-ADM-2026-003</span></div>
+        <div><b>Date:</b> <span id="admSlipDate">22 Feb 2026</span></div>
+        <div><b>Transaction ID:</b> <span id="admSlipTxnId">TXN_ONLINE_8002856232</span></div>
+        <div><b>Payment Mode:</b> <span id="admSlipMode">Online (UPI / QR / NetBanking)</span></div>
+        <div><b>Student Name:</b> <span id="admSlipStudentName">Ananya Kumari</span></div>
+        <div><b>Application No:</b> <span id="admSlipAppNo">APP-2026-003</span></div>
+        <div><b>Parent / Guardian:</b> <span id="admSlipParentName">Rajesh Sharma</span></div>
+        <div><b>Admission / Roll No:</b> <span id="admSlipAdmNo">GIS-004</span></div>
+        <div><b>Contact Phone:</b> <span id="admSlipPhone">8002856232</span></div>
+        <div><b>Course / Grade:</b> <span id="admSlipCourse">Pre-Primary (Nursery, LKG, UKG)</span></div>
+      </div>
+
+      <!-- Table -->
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">
+        <thead>
+          <tr style="background:#f1f5f9;border-bottom:2px solid #cbd5e1;text-align:left;">
+            <th style="padding:8px 10px;">#</th>
+            <th style="padding:8px 10px;">Fee Particulars</th>
+            <th style="padding:8px 10px;text-align:right;">Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody id="admSlipItemsBody">
+          <tr style="border-bottom:1px solid #e2e8f0;">
+            <td style="padding:8px 10px;">1</td>
+            <td style="padding:8px 10px;">Admission Registration & Processing Fee</td>
+            <td style="padding:8px 10px;text-align:right;">₹1,500.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e2e8f0;">
+            <td style="padding:8px 10px;">2</td>
+            <td style="padding:8px 10px;">Admission Fee (One-Time Component)</td>
+            <td style="padding:8px 10px;text-align:right;">₹2,000.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid #cbd5e1;font-weight:700;background:#f8fafc;">
+            <td style="padding:8px 10px;" colspan="2">TOTAL AMOUNT RECEIVED (PAID IN FULL)</td>
+            <td style="padding:8px 10px;text-align:right;color:#0b4f9c;font-size:15px;" id="admSlipTotalAmount">₹3,500.00</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Status & Stamp -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:12.5px;color:#334155;">
+          <b>Amount in Words:</b> <span id="admSlipWords">Three Thousand Five Hundred Rupees Only</span><br>
+          <b>Balance Due:</b> <span style="color:#16a34a;font-weight:700;">₹0.00 (Nil)</span>
+        </div>
+        <div style="border:2px solid #16a34a;color:#16a34a;font-weight:800;padding:6px 14px;border-radius:6px;transform:rotate(-4deg);letter-spacing:1px;font-size:12px;text-align:center;">
+          ✓ PAID & VERIFIED<br><small style="font-size:9px;font-weight:600;">OFFICIAL GIS ONLINE RECEIPT</small>
+        </div>
+      </div>
+
+      <!-- Signatures -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:28px;padding-top:10px;border-top:1px dashed #cbd5e1;font-size:12px;">
+        <div style="text-align:center;">
+          <div style="font-style:italic;color:#64748b;margin-bottom:2px;">Digitally Authenticated</div>
+          <b>Accounts Officer / Cashier</b>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-weight:700;color:#0b4f9c;margin-bottom:2px;">R.K. Choudhary</div>
+          <b>Principal / Authorised Signatory</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Footer -->
+    <div style="background:#f8fafc;padding:12px 24px;display:flex;justify-content:space-between;border-top:1px solid #e2e8f0;" class="no-print">
+      <button class="btn ghost" onclick="closeModal('adminPaymentSlipModal')">Close</button>
+      <button class="btn primary" onclick="printAdminSlip()">🖨️ Print Receipt</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script src="assets/config.js"></script>
@@ -702,21 +879,27 @@
     const emailEl = document.getElementById('adminEmailBadge');
     const btnLogin = document.getElementById('btnLogin');
     const btnLogout = document.getElementById('btnLogout');
-    if (user && user.email) {
-      emailEl.textContent = `${user.email} (${user.role || 'Admin'})`;
+    const adminRoles = ['Super Admin', 'Principal', 'Accountant', 'Teacher', 'Reception'];
+    if (user && user.email && adminRoles.includes(user.role)) {
+      emailEl.textContent = `${user.email} (${user.role})`;
       btnLogin.style.display = 'none';
       btnLogout.style.display = 'inline-block';
     } else {
-      emailEl.textContent = 'Not Logged In';
+      emailEl.textContent = '🔒 Admin Login Required';
       btnLogin.style.display = 'inline-block';
       btnLogout.style.display = 'none';
+      openLoginModal();
     }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     const u = getUser();
-    if (u) updateAdminUI(u);
-    else updateAdminUI({ email: 'gissupaul@gmail.com', role: 'Super Admin' });
+    const adminRoles = ['Super Admin', 'Principal', 'Accountant', 'Teacher', 'Reception'];
+    if (u && adminRoles.includes(u.role)) {
+      updateAdminUI(u);
+    } else {
+      updateAdminUI(null);
+    }
   });
 </script>
 </body>

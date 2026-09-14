@@ -43,34 +43,40 @@
   <div id="authCard" class="login-card" style="max-width:540px;margin:30px auto;">
     <div style="text-align:center;">
       <img src="assets/logo.svg" alt="Gyansthali Logo" style="width:65px;height:65px;margin-bottom:8px;">
-      <h2 style="margin:0 0 4px;color:#0b4f9c;">Online Admissions 2026–27</h2>
-      <p style="font-size:13.5px;color:#64748b;margin:0;">Register your account to begin the 12-step application & enrollment process.</p>
+      <h2 style="margin:0 0 4px;color:#0b4f9c;">Student & Parent Unified Portal</h2>
+      <p style="font-size:13px;color:#64748b;margin:0;">Same shared login for Students & Parents. Sign in with registered Mobile Number, Application No, or Email.</p>
     </div>
 
     <!-- Auth Tabs: Sign In / Create Account -->
     <div style="display:flex;background:#f1f5f9;border-radius:10px;padding:4px;margin:15px 0;">
-      <button id="tabBtnLogin" class="btn primary" style="flex:1;padding:8px;" onclick="switchAuthTab('login')">Sign In</button>
+      <button id="tabBtnLogin" class="btn primary" style="flex:1;padding:8px;" onclick="switchAuthTab('login')">Sign In (Student / Parent)</button>
       <button id="tabBtnRegister" class="btn ghost" style="flex:1;padding:8px;border:0;" onclick="switchAuthTab('register')">New Registration</button>
     </div>
 
     <!-- Login Form -->
     <form id="formLogin" onsubmit="event.preventDefault(); handleUserLogin();" style="display:grid;gap:12px;">
       <div>
-        <label><small><b>Email Address or Username:</b></small></label>
-        <input id="loginEmail" type="email" placeholder="e.g. aman.kumar@example.com" value="aman.kumar@example.com" required>
+        <label><small><b>Student / Parent Login ID (Mobile / App No / Email):</b></small></label>
+        <input id="loginEmail" type="text" placeholder="e.g. 8002856232, APP-2026-003, or email" value="8002856232" required>
       </div>
       <div>
         <label><small><b>Password:</b></small></label>
-        <input id="loginPassword" type="password" placeholder="Enter your password" value="Student@123" required>
+        <input id="loginPassword" type="password" placeholder="Enter password" value="Student@123" required>
       </div>
-      <button class="btn primary" type="submit">Sign In to Dashboard →</button>
+      <button class="btn primary" type="submit">Sign In to Student & Parent Portal →</button>
 
       <!-- 1-Click Quick Demo Sign-ins -->
       <div style="margin-top:10px;border-top:1px solid #e2e8f0;padding-top:12px;">
         <small style="display:block;color:#64748b;margin-bottom:8px;text-align:center;"><b>1-Click Demo Logins:</b></small>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
-          <button type="button" class="btn btn-sm outline" onclick="fillDemoLogin('aman.kumar@example.com', 'Student@123')">👤 Demo Student (Aman)</button>
-          <button type="button" class="btn btn-sm outline" onclick="fillDemoLogin('gissupaul@gmail.com', 'ChangeMe!123')">🛡️ Super Admin</button>
+        <div style="display:flex;gap:8px;flex-direction:column;">
+          <button type="button" class="btn btn-sm outline" style="text-align:left;display:flex;justify-content:space-between;align-items:center;" onclick="fillDemoLogin('8002856232', 'Student@123')">
+            <span>🌟 <b>Ananya Kumari</b> (Parent: Rajesh Sharma)</span>
+            <span style="font-size:11px;background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:10px;">Selection / Admission Approved</span>
+          </button>
+          <button type="button" class="btn btn-sm outline" style="text-align:left;display:flex;justify-content:space-between;align-items:center;" onclick="fillDemoLogin('aman.kumar@example.com', 'Student@123')">
+            <span>📘 <b>Aman Kumar</b> (Parent: Ramesh Kumar)</span>
+            <span style="font-size:11px;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:10px;">Enrolled (Class VIII-A)</span>
+          </button>
         </div>
       </div>
     </form>
@@ -324,9 +330,10 @@
 
         <div id="admissionApprovedActionBox" class="hidden" style="margin-top:25px;background:#dcfce7;border:1px solid #86efac;padding:25px;border-radius:14px;max-width:650px;margin-left:auto;margin-right:auto;">
           <h3 style="color:#15803d;margin:0 0 8px;">🎉 Congratulations! Admission Approved!</h3>
-          <p style="color:#166534;margin:0 0 15px;">Your application has met all academic standards. Download your official provisional admission letter below and proceed to pay the admission fee.</p>
+          <p style="color:#166534;margin:0 0 15px;">Your application has met all academic standards. Download your official provisional admission letter below and proceed to pay the admission fee or print your payment slip.</p>
           <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
             <button class="btn outline" onclick="downloadAdmissionLetter()">📜 View / Print Admission Letter</button>
+            <button class="btn outline" onclick="openPaymentSlipModal()">🖨️ Official Payment Slip</button>
             <button class="btn primary" onclick="goToStep(7)">Proceed to Admission Fee Payment →</button>
           </div>
         </div>
@@ -340,7 +347,7 @@
           <div class="icon">🎓</div>
           <h2 style="margin:5px 0;">Official Admission & Enrollment Fee</h2>
           <p style="color:#64748b;">Final step: Pay term admission fee to generate your permanent Admission Number and Student ID.</p>
-          <div style="font-size:38px;color:#15803d;font-weight:900;margin:15px 0;">₹5,000</div>
+          <div style="font-size:38px;color:#15803d;font-weight:900;margin:15px 0;">₹3,500 – ₹5,000</div>
         </div>
 
         <div class="fee-box" style="margin:20px 0;">
@@ -348,11 +355,12 @@
             <b>Term Fee Checkout</b>
             <p style="margin:2px 0;font-size:13px;color:#64748b;">Includes registration, curriculum material, activity kit & library.</p>
           </div>
-          <button class="btn primary" onclick="processAdmissionFeePayment()">Pay ₹5,000 & Enroll</button>
+          <button class="btn primary" onclick="processAdmissionFeePayment()">Pay Online & Enroll</button>
         </div>
 
-        <div id="admFeeReceiptBox" class="hidden" style="background:#dcfce7;border:1px solid #86efac;padding:15px;border-radius:10px;text-align:center;">
-          <b style="color:#15803d;">✓ Admission Fee Confirmed! Enrollment No: <span id="enrNoDisplay">ENR-2026-104</span></b>
+        <div id="admFeeReceiptBox" class="hidden" style="background:#dcfce7;border:1px solid #86efac;padding:18px;border-radius:10px;text-align:center;">
+          <b style="color:#15803d;display:block;margin-bottom:8px;">✓ Admission Fee Confirmed! Enrollment No: <span id="enrNoDisplay">GIS-004</span></b>
+          <button class="btn outline" onclick="openPaymentSlipModal()">🖨️ Download / Print Official Admission Payment Slip</button>
         </div>
       </div>
     </div>
@@ -392,9 +400,12 @@
         <article>
           <div class="icon">💳</div>
           <h3>Fee Invoices & Receipts</h3>
-          <p>Admission Fee (₹5,000): <span class="badge badge-paid">Paid</span></p>
-          <p style="font-size:13px;color:#64748b;margin-top:6px;">Session Fee (Due 10 April): ₹5,000</p>
-          <button class="btn btn-sm primary" style="margin-top:8px;" onclick="payDemo()">Pay Session Fee</button>
+          <p>Admission Fee: <span class="badge badge-paid">Paid in Full</span></p>
+          <p style="font-size:13px;color:#64748b;margin-top:6px;">Official payment slip & digital receipt verified.</p>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+            <button class="btn btn-sm primary" onclick="openPaymentSlipModal()">🖨️ View Official Payment Slip</button>
+            <button class="btn btn-sm outline" onclick="payDemo()">Pay Session Dues</button>
+          </div>
         </article>
 
         <article>
@@ -473,6 +484,118 @@
     <div class="modal-actions">
       <button class="btn outline" onclick="closeModal('editProfileModal')">Cancel</button>
       <button class="btn primary" onclick="submitUpdateProfile()">Save Profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- OFFICIAL ADMISSION PAYMENT SLIP MODAL -->
+<div class="modal-overlay hidden" id="paymentSlipModal">
+  <div class="modal-card" style="max-width:760px;padding:0;overflow:hidden;border:2px solid #0b4f9c;">
+    <!-- Printable Slip Document -->
+    <div id="printableSlip" style="padding:28px 32px;background:#fff;color:#0f172a;position:relative;">
+      <!-- Watermark -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:75px;font-weight:900;color:rgba(11,79,156,0.04);pointer-events:none;white-space:nowrap;user-select:none;">
+        GYANSTHALI
+      </div>
+
+      <!-- School Header -->
+      <div style="display:flex;align-items:center;gap:16px;border-bottom:2px solid #0b4f9c;padding-bottom:14px;margin-bottom:16px;">
+        <img src="assets/logo.svg" alt="Gyansthali Crest" style="width:72px;height:72px;">
+        <div style="flex:1;">
+          <h2 style="margin:0;color:#0b4f9c;font-size:22px;letter-spacing:0.5px;">GYANSTHALI INTERNATIONAL SCHOOL</h2>
+          <div style="font-size:12px;font-weight:600;color:#64748b;margin-top:2px;">
+            Recognized English Medium Co-Educational Institution • CBSE Curriculum Pattern
+          </div>
+          <div style="font-size:12px;color:#334155;margin-top:2px;">
+            📍 Khairi, P.S. Khanpur, District Samastipur, Bihar - 848117
+          </div>
+          <div style="font-size:12px;color:#334155;">
+            📞 +91 80028 56232 &nbsp;|&nbsp; ✉️ gissupaul@gmail.com
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <span style="background:#e0f2fe;color:#0369a1;font-weight:800;padding:4px 10px;border-radius:6px;font-size:11px;">OFFICIAL RECEIPT</span>
+          <div style="font-size:11px;color:#64748b;margin-top:4px;">Original Copy (Student)</div>
+        </div>
+      </div>
+
+      <!-- Title Bar -->
+      <div style="background:#0b4f9c;color:#fff;text-align:center;padding:7px 12px;border-radius:6px;font-weight:700;font-size:13.5px;letter-spacing:0.5px;margin-bottom:16px;">
+        OFFICIAL ADMISSION FEE PAYMENT RECEIPT / SLIP
+      </div>
+
+      <!-- Details Grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:13px;background:#f8fafc;padding:14px 18px;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:16px;">
+        <div><b>Receipt No:</b> <span id="slipReceiptNo">REC-ADM-2026-003</span></div>
+        <div><b>Date:</b> <span id="slipDate">22 Feb 2026</span></div>
+        <div><b>Transaction ID:</b> <span id="slipTxnId">TXN_ONLINE_8002856232</span></div>
+        <div><b>Payment Mode:</b> <span id="slipMode">Online (UPI / QR / NetBanking)</span></div>
+        <div><b>Student Name:</b> <span id="slipStudentName">Ananya Kumari</span></div>
+        <div><b>Application No:</b> <span id="slipAppNo">APP-2026-003</span></div>
+        <div><b>Parent / Guardian:</b> <span id="slipParentName">Rajesh Sharma</span></div>
+        <div><b>Admission / Roll No:</b> <span id="slipAdmNo">GIS-004</span></div>
+        <div><b>Contact Phone:</b> <span id="slipPhone">8002856232</span></div>
+        <div><b>Course / Grade:</b> <span id="slipCourse">Pre-Primary (Nursery, LKG, UKG)</span></div>
+      </div>
+
+      <!-- Table -->
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">
+        <thead>
+          <tr style="background:#f1f5f9;border-bottom:2px solid #cbd5e1;text-align:left;">
+            <th style="padding:8px 10px;">#</th>
+            <th style="padding:8px 10px;">Fee Particulars</th>
+            <th style="padding:8px 10px;text-align:right;">Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody id="slipItemsBody">
+          <tr style="border-bottom:1px solid #e2e8f0;">
+            <td style="padding:8px 10px;">1</td>
+            <td style="padding:8px 10px;">Admission Registration & Processing Fee</td>
+            <td style="padding:8px 10px;text-align:right;">₹1,500.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e2e8f0;">
+            <td style="padding:8px 10px;">2</td>
+            <td style="padding:8px 10px;">Admission Fee (One-Time Component)</td>
+            <td style="padding:8px 10px;text-align:right;">₹2,000.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid #cbd5e1;font-weight:700;background:#f8fafc;">
+            <td style="padding:8px 10px;" colspan="2">TOTAL AMOUNT RECEIVED (PAID IN FULL)</td>
+            <td style="padding:8px 10px;text-align:right;color:#0b4f9c;font-size:15px;" id="slipTotalAmount">₹3,500.00</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Status & Stamp -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+        <div style="font-size:12.5px;color:#334155;">
+          <b>Amount in Words:</b> <span id="slipWords">Three Thousand Five Hundred Rupees Only</span><br>
+          <b>Balance Due:</b> <span style="color:#16a34a;font-weight:700;">₹0.00 (Nil)</span>
+        </div>
+        <div style="border:2px solid #16a34a;color:#16a34a;font-weight:800;padding:6px 14px;border-radius:6px;transform:rotate(-4deg);letter-spacing:1px;font-size:12px;text-align:center;">
+          ✓ PAID & VERIFIED<br><small style="font-size:9px;font-weight:600;">OFFICIAL GIS ONLINE RECEIPT</small>
+        </div>
+      </div>
+
+      <!-- Signatures -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:28px;padding-top:10px;border-top:1px dashed #cbd5e1;font-size:12px;">
+        <div style="text-align:center;">
+          <div style="font-style:italic;color:#64748b;margin-bottom:2px;">Digitally Authenticated</div>
+          <b>Accounts Officer / Cashier</b>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-weight:700;color:#0b4f9c;margin-bottom:2px;">R.K. Choudhary</div>
+          <b>Principal / Authorised Signatory</b>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:10.5px;color:#94a3b8;margin-top:14px;">
+        This is an official computer-generated fee receipt issued by Gyansthali International School, Khairi, Khanpur, Samastipur, Bihar.
+      </div>
+    </div>
+
+    <!-- Actions Footer -->
+    <div style="background:#f8fafc;padding:12px 24px;display:flex;justify-content:space-between;border-top:1px solid #e2e8f0;" class="no-print">
+      <button class="btn ghost" onclick="closeModal('paymentSlipModal')">Close</button>
+      <button class="btn primary" onclick="printSlip()">🖨️ Print / Save PDF Receipt</button>
     </div>
   </div>
 </div>
@@ -831,6 +954,32 @@
     } else {
       alert(res.data?.error || 'Failed to update profile');
     }
+  }
+
+  function openPaymentSlipModal() {
+    if (currentApp) {
+      document.getElementById('slipStudentName').textContent = currentApp.applicant_name || 'Ananya Kumari';
+      document.getElementById('slipParentName').textContent = currentApp.parent_name || 'Rajesh Sharma';
+      document.getElementById('slipPhone').textContent = currentApp.parent_phone || '8002856232';
+      document.getElementById('slipAppNo').textContent = currentApp.application_no || 'APP-2026-003';
+      document.getElementById('slipAdmNo').textContent = currentApp.admission_no || 'GIS-004';
+      if (currentApp.application_no === 'APP-2026-003') {
+        document.getElementById('slipReceiptNo').textContent = 'REC-ADM-2026-003';
+        document.getElementById('slipTotalAmount').textContent = '₹3,500.00';
+        document.getElementById('slipWords').textContent = 'Three Thousand Five Hundred Rupees Only';
+        document.getElementById('slipCourse').textContent = 'Pre-Primary (Nursery, LKG, UKG)';
+      } else {
+        document.getElementById('slipReceiptNo').textContent = 'REC-ADM-2026-001';
+        document.getElementById('slipTotalAmount').textContent = '₹5,000.00';
+        document.getElementById('slipWords').textContent = 'Five Thousand Rupees Only';
+        document.getElementById('slipCourse').textContent = 'Middle School (Class VIII)';
+      }
+    }
+    document.getElementById('paymentSlipModal').classList.remove('hidden');
+  }
+
+  function printSlip() {
+    window.print();
   }
 
   function portalLogout() {
