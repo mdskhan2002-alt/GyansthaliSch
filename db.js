@@ -787,6 +787,36 @@ try {
     stu004.parent_phone = '8002856232';
   }
 
+  // Ensure Aman Kumar details
+  let app001 = (store.applications || []).find(a => a.application_no === 'APP-2026-001');
+  if (app001) {
+    app001.admission_no = 'GIS-001';
+    app001.stage = 'Enrollment';
+    app001.status = 'admitted';
+    app001.course_id = 3;
+    app001.merit_rank = 1;
+    app001.percentage = 88.0;
+  }
+  let stu001 = (store.students || []).find(s => s.name === 'Aman Kumar' || s.admission_no === 'GIS-001');
+  if (stu001) {
+    stu001.user_id = 2;
+    stu001.admission_no = 'GIS-001';
+    stu001.class_name = 'Class VIII';
+    stu001.section = 'A';
+    stu001.roll_no = '101';
+    stu001.parent_name = 'Ramesh Kumar';
+    stu001.parent_phone = '8002856232';
+  }
+
+  // Ensure Vikram Singh details
+  let app002 = (store.applications || []).find(a => a.application_no === 'APP-2026-002');
+  if (app002) {
+    app002.stage = 'Admission Approval';
+    app002.status = 'in_progress';
+    app002.merit_rank = 2;
+    app002.percentage = 84.0;
+  }
+
   flush();
 
   // Unified Database Engine Object
@@ -1143,6 +1173,9 @@ try {
           }
           if (q.includes('FROM students WHERE user_id=?')) {
             return store.students.find(s => s.user_id === Number(params[0]));
+          }
+          if (q.includes('FROM students WHERE name=?')) {
+            return store.students.find(s => s.name === String(params[0]));
           }
           if (q.includes('FROM applications WHERE id=?')) {
             return store.applications.find(a => a.id === Number(params[0]));

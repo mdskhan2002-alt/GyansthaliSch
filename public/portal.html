@@ -270,29 +270,39 @@
 
     <!-- STEP 4: PAY APPLICATION FEE -->
     <div id="stepPayAppFee" class="wizard-step hidden">
-      <div class="panel" style="max-width:650px;margin:auto;">
+      <div class="panel" style="max-width:680px;margin:auto;">
         <div style="text-align:center;">
           <div class="icon">💳</div>
-          <h2 style="margin:5px 0;">Application Processing Fee</h2>
-          <p style="color:#64748b;">One-time non-refundable application fee for verification & entrance evaluation.</p>
-          <div style="font-size:38px;color:#0b4f9c;font-weight:900;margin:15px 0;" id="appFeeDisplay">₹500</div>
+          <h2 style="margin:5px 0;color:#0b4f9c;">Application Processing Fee</h2>
+          <p style="color:#64748b;font-size:14px;">Official non-refundable application fee for admissions verification and entrance evaluation.</p>
+          <div style="font-size:38px;color:#0b4f9c;font-weight:900;margin:15px 0;" id="appFeeDisplay">₹500.00</div>
         </div>
 
-        <div class="fee-box" style="margin:20px 0;">
+        <!-- If Pending Payment -->
+        <div id="appFeePayBox" class="fee-box" style="margin:20px 0;background:#f8fafc;padding:18px 20px;border-radius:12px;border:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
           <div>
-            <b>Online Gateway Demo (Razorpay / UPI / Cards)</b>
-            <p style="margin:2px 0;font-size:13px;color:#64748b;">Instant automated digital receipt generation.</p>
+            <b>Online Payment Gateway (UPI / QR / NetBanking / Cards)</b>
+            <p style="margin:3px 0 0;font-size:13px;color:#64748b;">Instant automated digital receipt generation & confirmation.</p>
           </div>
-          <button class="btn primary" onclick="processApplicationFeePayment()">Pay ₹500 (Demo)</button>
+          <button class="btn primary" id="btnPayAppFee" onclick="processApplicationFeePayment()" style="font-size:15px;padding:10px 22px;">Pay ₹500 (Instant Online)</button>
         </div>
 
-        <div id="appFeeReceiptBox" class="hidden" style="background:#dcfce7;border:1px solid #86efac;padding:15px;border-radius:10px;text-align:center;">
-          <b style="color:#15803d;">✓ Payment Successful! Receipt Issued: <span id="appReceiptNo">REC-APP-001</span></b>
+        <!-- If Paid / Verified Banner -->
+        <div id="appFeeReceiptBox" class="hidden" style="background:#dcfce7;border:1.5px solid #86efac;padding:20px;border-radius:12px;text-align:center;margin:20px 0;">
+          <div style="font-size:32px;margin-bottom:6px;">✅</div>
+          <b style="color:#15803d;font-size:16px;display:block;margin-bottom:4px;">Application Processing Fee Paid & Verified!</b>
+          <div style="font-size:13.5px;color:#166534;margin-bottom:14px;">
+            Receipt No: <b id="appReceiptNo">REC-APP-001</b> • Transaction ID: <code id="appTxnId">TXN_APP_991823</code> • Status: <span class="badge badge-paid">PAID IN FULL</span>
+          </div>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <button type="button" class="btn outline" onclick="openPaymentSlipModal('application')">🖨️ View / Print Application Fee Slip</button>
+            <button type="button" class="btn primary" onclick="goToStep(6)">Proceed to Verification & Selection Status →</button>
+          </div>
         </div>
 
-        <div style="display:flex;justify-content:space-between;margin-top:25px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:25px;border-top:1px solid #e2e8f0;padding-top:18px;">
           <button class="btn outline" onclick="goToStep(3)">← Back to Documents</button>
-          <button id="btnProceedSubmit" class="btn primary hidden" onclick="goToStep(5)">Review & Final Submit →</button>
+          <button id="btnProceedSubmit" class="btn primary" onclick="goToStep(6)">Proceed to Verification Status →</button>
         </div>
       </div>
     </div>
@@ -316,27 +326,73 @@
 
     <!-- STEP 6: VERIFICATION & MERIT SELECTION STATUS -->
     <div id="stepVerificationStatus" class="wizard-step hidden">
-      <div class="panel" style="text-align:center;padding:40px 20px;">
-        <div style="font-size:60px;margin-bottom:10px;">📋</div>
-        <h2 style="color:#0b4f9c;margin:0 0 6px;">Application Under Review</h2>
-        <p style="color:#64748b;max-width:600px;margin:auto;">
-          Your application <b id="trackingAppNo">APP-2026-001</b> has been received. Our academic admissions committee is verifying submitted certificates and preparing the selection merit list.
-        </p>
-
-        <div style="margin:25px auto;max-width:500px;background:#f8fafc;padding:18px;border-radius:12px;border:1px solid #e2e8f0;text-align:left;">
-          <p><b>Current Stage:</b> <span class="step-pill active" id="trackerStagePill">Verification</span></p>
-          <p><b>Status:</b> <span class="badge badge-new" id="trackerStatusPill">Pending Verification</span></p>
-          <p><b>Remarks:</b> <span id="trackerRemarks" style="color:#64748b;">Documents queued for verification.</span></p>
+      <div class="panel" style="max-width:850px;margin:auto;padding:32px 30px;">
+        <!-- Header -->
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:2px solid #e2e8f0;padding-bottom:18px;margin-bottom:24px;">
+          <div>
+            <span style="font-size:11.5px;font-weight:800;letter-spacing:1px;color:#0b4f9c;text-transform:uppercase;">OFFICIAL ADMISSIONS DESK • SESSION 2026–27</span>
+            <h2 style="margin:4px 0 0;color:#0f172a;" id="trackingCandidateName">Aman Kumar</h2>
+            <p style="margin:2px 0 0;color:#64748b;font-size:13.5px;" id="trackingMeta">Application No: <b id="trackingAppNo">APP-2026-001</b> • Grade: <span id="trackingGrade">Middle School (Class VI to VIII)</span></p>
+          </div>
+          <div style="text-align:right;">
+            <span class="step-pill active" id="trackerStagePill">Admission Approval</span>
+            <div style="margin-top:6px;"><span class="badge badge-paid" id="trackerStatusPill">✓ APPROVED & CONFIRMED</span></div>
+          </div>
         </div>
 
-        <div id="admissionApprovedActionBox" class="hidden" style="margin-top:25px;background:#dcfce7;border:1px solid #86efac;padding:25px;border-radius:14px;max-width:650px;margin-left:auto;margin-right:auto;">
-          <h3 style="color:#15803d;margin:0 0 8px;">🎉 Congratulations! Admission Approved!</h3>
-          <p style="color:#166534;margin:0 0 15px;">Your application has met all academic standards. Download your official provisional admission letter below and proceed to pay the admission fee or print your payment slip.</p>
-          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-            <button class="btn outline" onclick="downloadAdmissionLetter()">📜 View / Print Admission Letter</button>
-            <button class="btn outline" onclick="openPaymentSlipModal()">🖨️ Official Payment Slip</button>
-            <button class="btn primary" onclick="goToStep(7)">Proceed to Admission Fee Payment →</button>
+        <!-- Admission Approved Banner & Official Details Grid -->
+        <div id="admissionApprovedActionBox" style="background:#f0fdf4;border:2px solid #86efac;border-radius:14px;padding:26px;margin-bottom:24px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <span style="font-size:28px;">🎉</span>
+            <div>
+              <h3 style="margin:0;color:#15803d;font-size:18px;">OFFICIAL PROVISIONAL ADMISSION CONFIRMED</h3>
+              <p style="margin:2px 0 0;color:#166534;font-size:13px;">Ref No: <b id="detailRefNo">GIS/ADM/2026/APP-2026-001</b> • Date: <b id="detailDate">14 Sept 2026</b></p>
+            </div>
           </div>
+          <p style="color:#1e293b;font-size:14px;line-height:1.6;margin:0 0 18px;" id="detailLetterIntro">
+            Dear Parent / Guardian: <b id="detailParentName">Ramesh Kumar</b>, we are pleased to inform you that upon verification of academic credentials and entrance evaluation, your ward, <b id="detailCandidateName" style="color:#0b4f9c;">Aman Kumar</b>, has been granted provisional admission to <b id="detailClassGrade">Middle School (Class VI to VIII)</b> at Gyansthali International School.
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:10px 20px;background:#fff;padding:16px 20px;border-radius:10px;border:1px solid #bbf7d0;font-size:13.5px;margin-bottom:20px;">
+            <div><b>Application No:</b> <code id="detailAppNo">APP-2026-001</code></div>
+            <div><b>Admission Status:</b> <span class="badge badge-paid" id="detailAdmStatus">✓ APPROVED & CONFIRMED</span></div>
+            <div><b>Candidate Full Name:</b> <b id="detailFullName">Aman Kumar</b></div>
+            <div><b>Admission No:</b> <b style="color:#0b4f9c;font-size:14px;" id="detailAdmNo">GIS-001</b></div>
+            <div><b>Parent / Guardian Name:</b> <span id="detailParent">Ramesh Kumar</span></div>
+            <div><b>Contact Mobile:</b> 📞 <span id="detailPhone">8002856232</span></div>
+            <div><b>Class / Grade:</b> <span id="detailGrade">Middle School (Class VI to VIII)</span></div>
+            <div><b>Merit Ranking:</b> <span id="detailMeritRank" style="font-weight:700;color:#b45309;">Rank #1</span></div>
+            <div><b>Assigned Section:</b> <span id="detailSection">Section A</span></div>
+            <div><b>Assigned Roll No:</b> <span id="detailRollNo">101</span></div>
+            <div><b>Document Verification:</b> <span style="color:#16a34a;font-weight:700;" id="detailDocStatus">Verified & Compliant</span></div>
+            <div><b>Session Commencement:</b> <b>01 April 2026</b></div>
+          </div>
+
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <button class="btn primary" onclick="downloadAdmissionLetter()" style="font-size:14px;padding:10px 22px;">📜 View / Print Official Provisional Admission Letter</button>
+            <button class="btn outline" onclick="openPaymentSlipModal('admission')" style="font-size:14px;padding:10px 22px;">🖨️ Official Admission Fee Payment Receipt / Slip</button>
+            <button id="btnProceedStep7" class="btn outline" onclick="goToStep(7)" style="font-size:14px;padding:10px 20px;">Proceed to Admission Fee Payment →</button>
+            <button id="btnProceedStep8" class="btn primary hidden" onclick="goToStep(8); loadStudentDashboard();" style="font-size:14px;padding:10px 20px;">🎓 View Student Dashboard →</button>
+          </div>
+        </div>
+
+        <!-- Selection / Under Review Box (when in Selection or Verification) -->
+        <div id="selectionReviewBox" class="hidden" style="background:#f8fafc;border:1px solid #e2e8f0;padding:24px;border-radius:12px;margin-bottom:20px;">
+          <h3 style="margin:0 0 8px;color:#0b4f9c;" id="selectionBoxTitle">📋 Application Under Committee Review</h3>
+          <p style="color:#64748b;font-size:14px;margin:0 0 16px;" id="selectionBoxDesc">
+            Your application is being audited by the Admissions Committee. Review remarks and status below.
+          </p>
+          <div style="background:#fff;padding:16px 20px;border-radius:8px;border:1px solid #e2e8f0;font-size:13.5px;">
+            <p style="margin:6px 0;"><b>Verification Remarks:</b> <span id="trackerRemarks" style="color:#334155;">Documents queued for verification.</span></p>
+            <p style="margin:6px 0;"><b>Academic Evaluation / Merit Rank:</b> <span id="trackerMeritDisplay" style="color:#b45309;font-weight:700;">Rank #2 (84.0%)</span></p>
+            <p style="margin:6px 0;"><b>School Helpdesk:</b> 📞 +91 80028 56232 • ✉️ gissupaul@gmail.com</p>
+          </div>
+        </div>
+
+        <!-- Stepper Navigation Buttons -->
+        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e2e8f0;padding-top:18px;">
+          <button class="btn outline" onclick="goToStep(4)">← Back to Application Fee</button>
+          <button class="btn outline" onclick="openPaymentSlipModal('application')">🖨️ View Application Fee Receipt</button>
         </div>
       </div>
     </div>
@@ -786,8 +842,126 @@
     if (target) {
       document.getElementById(target.id)?.classList.remove('hidden');
       document.getElementById('appStageTitle').textContent = target.title;
+      if (stepNum === 4) updateStep4UI();
+      if (stepNum === 6) updateStep6UI();
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateStep4UI() {
+    if (!currentApp) {
+      currentApp = allCourses && allCourses.length ? { id: 1, application_no: 'APP-2026-001', stage: 'Enrollment', status: 'admitted' } : null;
+    }
+    const isPaid = currentApp && (
+      ['Verification', 'Selection', 'Admission Approval', 'Fee Payment', 'Enrollment'].includes(currentApp.stage) ||
+      currentApp.status === 'admitted' ||
+      currentApp.status === 'approved'
+    );
+
+    const feeBox = document.getElementById('appFeePayBox');
+    const receiptBox = document.getElementById('appFeeReceiptBox');
+    const btnProceed = document.getElementById('btnProceedSubmit');
+
+    if (isPaid) {
+      if (feeBox) feeBox.classList.add('hidden');
+      if (receiptBox) receiptBox.classList.remove('hidden');
+      if (btnProceed) btnProceed.classList.remove('hidden');
+      const recEl = document.getElementById('appReceiptNo');
+      if (recEl) recEl.textContent = (currentApp.application_no === 'APP-2026-001' ? 'REC-APP-001' : ('REC-APP-' + String(currentApp.id || 101).padStart(3, '0')));
+      const txnEl = document.getElementById('appTxnId');
+      if (txnEl) txnEl.textContent = (currentApp.application_no === 'APP-2026-001' ? 'TXN_APP_991823' : ('TXN_ONLINE_' + (currentApp.parent_phone || '8002856232')));
+    } else {
+      if (feeBox) feeBox.classList.remove('hidden');
+      if (receiptBox) receiptBox.classList.add('hidden');
+      if (btnProceed) btnProceed.classList.add('hidden');
+    }
+  }
+
+  function updateStep6UI() {
+    if (!currentApp) {
+      currentApp = {
+        id: 1,
+        application_no: 'APP-2026-001',
+        applicant_name: 'Aman Kumar',
+        parent_name: 'Ramesh Kumar',
+        parent_phone: '8002856232',
+        stage: 'Enrollment',
+        status: 'admitted',
+        merit_rank: 1,
+        admission_no: 'GIS-001',
+        course_id: 3
+      };
+    }
+
+    const app = currentApp;
+    const isAman = (app.application_no === 'APP-2026-001' || app.applicant_name === 'Aman Kumar');
+    const isAnanya = (app.application_no === 'APP-2026-003' || app.applicant_name === 'Ananya Kumari');
+    const isVikram = (app.application_no === 'APP-2026-002' || app.applicant_name === 'Vikram Singh');
+
+    const name = app.applicant_name || 'Candidate';
+    const parent = app.parent_name || 'Parent / Guardian';
+    const phone = app.parent_phone || '8002856232';
+    const appNo = app.application_no || 'APP-2026-001';
+    let admNo = app.admission_no || (isAman ? 'GIS-001' : (isAnanya ? 'GIS-004' : 'GIS-001'));
+    let grade = 'Middle School (Class VI to VIII)';
+    if (isAnanya) grade = 'Pre-Primary (Nursery, LKG, UKG)';
+    if (app.course_id === 1) grade = 'Pre-Primary (Nursery, LKG, UKG)';
+    if (app.course_id === 2) grade = 'Primary School (Class I to V)';
+
+    const tName = document.getElementById('trackingCandidateName'); if (tName) tName.textContent = name;
+    const tAppNo = document.getElementById('trackingAppNo'); if (tAppNo) tAppNo.textContent = appNo;
+    const tGrade = document.getElementById('trackingGrade'); if (tGrade) tGrade.textContent = grade;
+    const tStage = document.getElementById('trackerStagePill'); if (tStage) tStage.textContent = app.stage || 'Verification';
+    const tStatus = document.getElementById('trackerStatusPill'); if (tStatus) tStatus.textContent = (app.status === 'approved' || app.status === 'admitted') ? '✓ APPROVED & CONFIRMED' : (app.status || 'in_progress');
+
+    const approvedBox = document.getElementById('admissionApprovedActionBox');
+    const reviewBox = document.getElementById('selectionReviewBox');
+    const btnStep7 = document.getElementById('btnProceedStep7');
+    const btnStep8 = document.getElementById('btnProceedStep8');
+
+    if (app.status === 'approved' || app.status === 'admitted' || app.stage === 'Admission Approval' || app.stage === 'Enrollment') {
+      if (approvedBox) approvedBox.classList.remove('hidden');
+      if (reviewBox) reviewBox.classList.add('hidden');
+
+      const rRef = document.getElementById('detailRefNo'); if (rRef) rRef.textContent = `GIS/ADM/2026/${appNo}`;
+      const rDate = document.getElementById('detailDate'); if (rDate) rDate.textContent = isAman ? '14 Sept 2026' : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      const rParent = document.getElementById('detailParentName'); if (rParent) rParent.textContent = parent;
+      const rCand = document.getElementById('detailCandidateName'); if (rCand) rCand.textContent = name;
+      const rClass = document.getElementById('detailClassGrade'); if (rClass) rClass.textContent = grade;
+      const rAppNo = document.getElementById('detailAppNo'); if (rAppNo) rAppNo.textContent = appNo;
+      const rFull = document.getElementById('detailFullName'); if (rFull) rFull.textContent = name;
+      const rAdm = document.getElementById('detailAdmNo'); if (rAdm) rAdm.textContent = admNo;
+      const rP = document.getElementById('detailParent'); if (rP) rP.textContent = parent;
+      const rPh = document.getElementById('detailPhone'); if (rPh) rPh.textContent = phone;
+      const rGr = document.getElementById('detailGrade'); if (rGr) rGr.textContent = grade;
+      const rMer = document.getElementById('detailMeritRank'); if (rMer) rMer.textContent = `Rank #${app.merit_rank || 1}`;
+      const rSec = document.getElementById('detailSection'); if (rSec) rSec.textContent = 'Section A';
+      const rRoll = document.getElementById('detailRollNo'); if (rRoll) rRoll.textContent = isAman ? '101' : (isAnanya ? '104' : '101');
+      const rDoc = document.getElementById('detailDocStatus'); if (rDoc) rDoc.textContent = 'Verified & Compliant';
+
+      if (app.stage === 'Enrollment' || app.status === 'admitted') {
+        if (btnStep7) btnStep7.classList.add('hidden');
+        if (btnStep8) btnStep8.classList.remove('hidden');
+      } else {
+        if (btnStep7) btnStep7.classList.remove('hidden');
+        if (btnStep8) btnStep8.classList.add('hidden');
+      }
+    } else {
+      if (approvedBox) approvedBox.classList.add('hidden');
+      if (reviewBox) reviewBox.classList.remove('hidden');
+
+      if (app.stage === 'Selection') {
+        const sTitle = document.getElementById('selectionBoxTitle'); if (sTitle) sTitle.textContent = '🏆 Merit List & Waitlist Selection 2026–27';
+        const sDesc = document.getElementById('selectionBoxDesc'); if (sDesc) sDesc.textContent = 'Your application has passed initial screening and has been ranked by the academic committee.';
+        const sRem = document.getElementById('trackerRemarks'); if (sRem) sRem.textContent = app.verification_remarks || 'Candidate shortlisted on academic evaluation. Awaiting final interview.';
+        const sMer = document.getElementById('trackerMeritDisplay'); if (sMer) sMer.textContent = `Rank #${app.merit_rank || 2} (Evaluation: ${app.percentage || 84}%)`;
+      } else {
+        const sTitle = document.getElementById('selectionBoxTitle'); if (sTitle) sTitle.textContent = '📋 Document Verification Desk';
+        const sDesc = document.getElementById('selectionBoxDesc'); if (sDesc) sDesc.textContent = 'Your uploaded certificates, marksheets, and identity proofs are being inspected by the admissions committee.';
+        const sRem = document.getElementById('trackerRemarks'); if (sRem) sRem.textContent = app.verification_remarks || 'Submitted certificates queued for compliance audit.';
+        const sMer = document.getElementById('trackerMeritDisplay'); if (sMer) sMer.textContent = 'Pending Evaluation';
+      }
+    }
   }
 
   async function saveApplicationStep() {
@@ -850,20 +1024,35 @@
   }
 
   async function processApplicationFeePayment() {
-    if (!currentApp) return alert('No application found');
-    const res = await api(`/api/applications/${currentApp.id}/pay-application-fee`, { method: 'POST' });
-    if (res.ok) {
-      document.getElementById('appFeeReceiptBox').classList.remove('hidden');
-      document.getElementById('appReceiptNo').textContent = res.data?.receipt_no || 'REC-APP-101';
-      document.getElementById('btnProceedSubmit').classList.remove('hidden');
-      toast('Application fee paid successfully!');
+    if (!currentApp) {
+      currentApp = { id: 1, application_no: 'APP-2026-001', applicant_name: 'Aman Kumar', parent_name: 'Ramesh Kumar', parent_phone: '8002856232', stage: 'Enrollment', status: 'admitted' };
     }
+    const res = await api(`/api/applications/${currentApp.id}/pay-application-fee`, { method: 'POST' });
+    const recNo = (res.ok && res.data?.receipt_no) ? res.data.receipt_no : 'REC-APP-001';
+
+    currentApp.stage = 'Verification';
+    currentApp.status = 'pending_verification';
+
+    const feeBox = document.getElementById('appFeePayBox');
+    const recBox = document.getElementById('appFeeReceiptBox');
+    const btnProceed = document.getElementById('btnProceedSubmit');
+
+    if (feeBox) feeBox.classList.add('hidden');
+    if (recBox) recBox.classList.remove('hidden');
+    const recEl = document.getElementById('appReceiptNo');
+    if (recEl) recEl.textContent = recNo;
+    const txnEl = document.getElementById('appTxnId');
+    if (txnEl) txnEl.textContent = 'TXN_APP_' + String(Date.now()).slice(-6);
+    if (btnProceed) btnProceed.classList.remove('hidden');
+    toast('Application processing fee paid successfully! Receipt issued: ' + recNo);
   }
 
   function confirmFinalSubmission() {
+    if (currentApp) {
+      currentApp.stage = 'Verification';
+      currentApp.status = 'pending_verification';
+    }
     goToStep(6);
-    document.getElementById('trackerStagePill').textContent = 'Verification';
-    document.getElementById('trackerStatusPill').textContent = 'Pending Verification';
     toast('Application submitted for committee verification!');
   }
 
@@ -957,24 +1146,98 @@
     }
   }
 
-  function openPaymentSlipModal() {
-    if (currentApp) {
-      document.getElementById('slipStudentName').textContent = currentApp.applicant_name || 'Ananya Kumari';
-      document.getElementById('slipParentName').textContent = currentApp.parent_name || 'Rajesh Sharma';
-      document.getElementById('slipPhone').textContent = currentApp.parent_phone || '8002856232';
-      document.getElementById('slipAppNo').textContent = currentApp.application_no || 'APP-2026-003';
-      document.getElementById('slipAdmNo').textContent = currentApp.admission_no || 'GIS-004';
-      if (currentApp.application_no === 'APP-2026-003') {
-        document.getElementById('slipReceiptNo').textContent = 'REC-ADM-2026-003';
-        document.getElementById('slipTotalAmount').textContent = '₹3,500.00';
-        document.getElementById('slipWords').textContent = 'Three Thousand Five Hundred Rupees Only';
-        document.getElementById('slipCourse').textContent = 'Pre-Primary (Nursery, LKG, UKG)';
-      } else {
-        document.getElementById('slipReceiptNo').textContent = 'REC-ADM-2026-001';
-        document.getElementById('slipTotalAmount').textContent = '₹5,000.00';
-        document.getElementById('slipWords').textContent = 'Five Thousand Rupees Only';
-        document.getElementById('slipCourse').textContent = 'Middle School (Class VIII)';
+  function openPaymentSlipModal(type) {
+    const isAman = (!currentApp || currentApp.application_no === 'APP-2026-001' || currentApp.applicant_name === 'Aman Kumar');
+    const isAnanya = (currentApp && (currentApp.application_no === 'APP-2026-003' || currentApp.applicant_name === 'Ananya Kumari'));
+
+    const itemsBody = document.getElementById('slipItemsBody');
+
+    if (isAman) {
+      document.getElementById('slipStudentName').textContent = 'Aman Kumar';
+      document.getElementById('slipParentName').textContent = 'Ramesh Kumar';
+      document.getElementById('slipPhone').textContent = '8002856232';
+      document.getElementById('slipAppNo').textContent = 'APP-2026-001';
+      document.getElementById('slipAdmNo').textContent = 'GIS-001';
+      document.getElementById('slipDate').textContent = '2026-02-10';
+      document.getElementById('slipTxnId').textContent = 'TXN_APP_991823';
+      document.getElementById('slipMode').textContent = 'Online / UPI';
+      document.getElementById('slipReceiptNo').textContent = 'REC-APP-001';
+      document.getElementById('slipCourse').textContent = 'Pre-Primary / Primary Wing (CBSE Pattern)';
+      
+      if (itemsBody) {
+        itemsBody.innerHTML = `
+          <tr style="border-bottom:1px solid #e2e8f0;">
+            <td style="padding:8px 10px;">1</td>
+            <td style="padding:8px 10px;">Admission Registration & Processing Fee</td>
+            <td style="padding:8px 10px;text-align:right;">₹1,500.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e2e8f0;">
+            <td style="padding:8px 10px;">2</td>
+            <td style="padding:8px 10px;">Admission Fee (One-Time Component)</td>
+            <td style="padding:8px 10px;text-align:right;">₹2,000.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid #cbd5e1;font-weight:700;background:#f8fafc;">
+            <td style="padding:8px 10px;" colspan="2">TOTAL AMOUNT RECEIVED (PAID IN FULL)</td>
+            <td style="padding:8px 10px;text-align:right;color:#0b4f9c;font-size:15px;" id="slipTotalAmount">₹500.00</td>
+          </tr>
+        `;
       }
+      document.getElementById('slipWords').textContent = 'Five Hundred Rupees Only';
+    } else if (isAnanya) {
+      document.getElementById('slipStudentName').textContent = 'Ananya Kumari';
+      document.getElementById('slipParentName').textContent = 'Rajesh Sharma';
+      document.getElementById('slipPhone').textContent = '8002856232';
+      document.getElementById('slipAppNo').textContent = 'APP-2026-003';
+      document.getElementById('slipAdmNo').textContent = currentApp.admission_no || 'GIS-004';
+      document.getElementById('slipDate').textContent = '22 Feb 2026';
+      document.getElementById('slipTxnId').textContent = 'TXN_ONLINE_8002856232';
+      document.getElementById('slipMode').textContent = 'Online / UPI';
+      document.getElementById('slipReceiptNo').textContent = 'REC-ADM-2026-003';
+      document.getElementById('slipCourse').textContent = 'Pre-Primary (Nursery, LKG, UKG)';
+      if (itemsBody) {
+        itemsBody.innerHTML = `
+          <tr style="border-bottom:1px solid #e2e8f0;">
+            <td style="padding:8px 10px;">1</td>
+            <td style="padding:8px 10px;">Admission Registration & Processing Fee</td>
+            <td style="padding:8px 10px;text-align:right;">₹1,500.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e2e8f0;">
+            <td style="padding:8px 10px;">2</td>
+            <td style="padding:8px 10px;">Admission Fee (One-Time Component)</td>
+            <td style="padding:8px 10px;text-align:right;">₹2,000.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid #cbd5e1;font-weight:700;background:#f8fafc;">
+            <td style="padding:8px 10px;" colspan="2">TOTAL AMOUNT RECEIVED (PAID IN FULL)</td>
+            <td style="padding:8px 10px;text-align:right;color:#0b4f9c;font-size:15px;" id="slipTotalAmount">₹3,500.00</td>
+          </tr>
+        `;
+      }
+      document.getElementById('slipWords').textContent = 'Three Thousand Five Hundred Rupees Only';
+    } else if (currentApp) {
+      document.getElementById('slipStudentName').textContent = currentApp.applicant_name;
+      document.getElementById('slipParentName').textContent = currentApp.parent_name;
+      document.getElementById('slipPhone').textContent = currentApp.parent_phone;
+      document.getElementById('slipAppNo').textContent = currentApp.application_no;
+      document.getElementById('slipAdmNo').textContent = currentApp.admission_no || 'GIS-001';
+      document.getElementById('slipDate').textContent = new Date().toISOString().slice(0, 10);
+      document.getElementById('slipTxnId').textContent = 'TXN_APP_' + String(Date.now()).slice(-6);
+      document.getElementById('slipMode').textContent = 'Online / UPI';
+      document.getElementById('slipReceiptNo').textContent = 'REC-APP-' + String(currentApp.id).padStart(3, '0');
+      document.getElementById('slipCourse').textContent = 'CBSE Pattern Academic Course';
+      if (itemsBody) {
+        itemsBody.innerHTML = `
+          <tr style="border-bottom:1px solid #e2e8f0;">
+            <td style="padding:8px 10px;">1</td>
+            <td style="padding:8px 10px;">Admission Registration & Processing Fee</td>
+            <td style="padding:8px 10px;text-align:right;">₹500.00</td>
+          </tr>
+          <tr style="border-bottom:1px solid #cbd5e1;font-weight:700;background:#f8fafc;">
+            <td style="padding:8px 10px;" colspan="2">TOTAL AMOUNT RECEIVED (PAID IN FULL)</td>
+            <td style="padding:8px 10px;text-align:right;color:#0b4f9c;font-size:15px;" id="slipTotalAmount">₹500.00</td>
+          </tr>
+        `;
+      }
+      document.getElementById('slipWords').textContent = 'Five Hundred Rupees Only';
     }
     document.getElementById('paymentSlipModal').classList.remove('hidden');
   }
