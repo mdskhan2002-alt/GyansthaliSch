@@ -3,153 +3,846 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Student & Parent Portal | Gyansthali International School</title>
+  <title>Online Admission & Student Portal | Gyansthali International School</title>
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
   <link rel="stylesheet" href="assets/app.css">
 </head>
 <body class="portal">
 
-<!-- Header -->
+<!-- Top Navigation Bar -->
 <header class="site-header">
   <a class="logo" href="index.html">
     <img src="assets/logo.svg" alt="Gyansthali Crest" class="logo-icon">
     <div class="logo-text">
       <b>GYANSTHALI</b>
-      <small>PARENT & STUDENT PORTAL</small>
+      <small>ADMISSIONS & STUDENT LIFECYCLE</small>
     </div>
   </a>
-  <div style="display:flex;gap:12px;">
-    <a class="btn outline" href="index.html">← Public Website</a>
-    <a class="btn primary" href="admin.html">Admin Portal</a>
+
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a class="btn outline" href="index.html">← School Website</a>
+    <a class="btn outline" href="admin.html">Admin Portal</a>
+    
+    <!-- User Controls (Shown when logged in) -->
+    <div id="navUserArea" class="hidden" style="display:flex;align-items:center;gap:10px;">
+      <div class="admin-user" style="cursor:pointer;" onclick="openProfileModal()">
+        <span>👤</span>
+        <b id="navUserName">Student</b>
+      </div>
+      <button class="btn btn-sm outline" onclick="openChangePasswordModal()">🔑 Password</button>
+      <button class="btn btn-sm btn-danger" onclick="portalLogout()">Sign Out</button>
+    </div>
   </div>
 </header>
 
-<main class="portal-main">
-  <!-- Login Box -->
-  <div class="login-card" id="portalLoginCard">
+<main class="portal-main" style="max-width:1150px;margin:auto;padding:35px 20px;">
+
+  <!-- ============================================================
+       VIEW 1: REGISTRATION & LOGIN (ONBOARDING GATEWAY)
+       ============================================================ -->
+  <div id="authCard" class="login-card" style="max-width:540px;margin:30px auto;">
     <div style="text-align:center;">
-      <img src="assets/logo.svg" alt="Logo" style="width:60px;height:60px;margin-bottom:10px;">
-      <h2 style="margin:0 0 6px;color:#0b4f9c;">Parent / Student Portal</h2>
-      <p style="font-size:14px;color:#64748b;margin:0;">Access student attendance, fee receipts, and term results.</p>
+      <img src="assets/logo.svg" alt="Gyansthali Logo" style="width:65px;height:65px;margin-bottom:8px;">
+      <h2 style="margin:0 0 4px;color:#0b4f9c;">Online Admissions 2026–27</h2>
+      <p style="font-size:13.5px;color:#64748b;margin:0;">Register your account to begin the 12-step application & enrollment process.</p>
     </div>
 
-    <div>
-      <label><small><b>Admission No. or Registered Mobile:</b></small></label>
-      <input id="portalStudentQuery" placeholder="e.g. GIS-001 or 8002856232" value="GIS-001" style="margin-top:5px;">
+    <!-- Auth Tabs: Sign In / Create Account -->
+    <div style="display:flex;background:#f1f5f9;border-radius:10px;padding:4px;margin:15px 0;">
+      <button id="tabBtnLogin" class="btn primary" style="flex:1;padding:8px;" onclick="switchAuthTab('login')">Sign In</button>
+      <button id="tabBtnRegister" class="btn ghost" style="flex:1;padding:8px;border:0;" onclick="switchAuthTab('register')">New Registration</button>
     </div>
 
-    <div>
-      <label><small><b>Security PIN:</b></small></label>
-      <input id="portalPin" type="password" placeholder="Default PIN: 1234" value="1234" style="margin-top:5px;">
-    </div>
-
-    <button class="btn primary" onclick="portalLogin()">Log In to Portal</button>
-
-    <div style="text-align:center;margin-top:10px;">
-      <small style="color:#64748b;">Demo Login: Admission No <b>GIS-001</b> and PIN <b>1234</b></small>
-      <div style="margin-top:6px;font-size:12px;color:#64748b;">
-        Need help? Call school office at <b>8002856232</b>
+    <!-- Login Form -->
+    <form id="formLogin" onsubmit="event.preventDefault(); handleUserLogin();" style="display:grid;gap:12px;">
+      <div>
+        <label><small><b>Email Address or Username:</b></small></label>
+        <input id="loginEmail" type="email" placeholder="e.g. aman.kumar@example.com" value="aman.kumar@example.com" required>
       </div>
+      <div>
+        <label><small><b>Password:</b></small></label>
+        <input id="loginPassword" type="password" placeholder="Enter your password" value="Student@123" required>
+      </div>
+      <button class="btn primary" type="submit">Sign In to Dashboard →</button>
+
+      <!-- 1-Click Quick Demo Sign-ins -->
+      <div style="margin-top:10px;border-top:1px solid #e2e8f0;padding-top:12px;">
+        <small style="display:block;color:#64748b;margin-bottom:8px;text-align:center;"><b>1-Click Demo Logins:</b></small>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+          <button type="button" class="btn btn-sm outline" onclick="fillDemoLogin('aman.kumar@example.com', 'Student@123')">👤 Demo Student (Aman)</button>
+          <button type="button" class="btn btn-sm outline" onclick="fillDemoLogin('gissupaul@gmail.com', 'ChangeMe!123')">🛡️ Super Admin</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Register Form -->
+    <form id="formRegister" class="hidden" onsubmit="event.preventDefault(); handleUserRegister();" style="display:grid;gap:12px;">
+      <div>
+        <label><small><b>Applicant Full Name *:</b></small></label>
+        <input id="regName" placeholder="e.g. Rahul Sharma" required>
+      </div>
+      <div>
+        <label><small><b>Email Address *:</b></small></label>
+        <input id="regEmail" type="email" placeholder="e.g. student@gmail.com" required>
+      </div>
+      <div>
+        <label><small><b>Mobile Phone Number *:</b></small></label>
+        <input id="regPhone" type="tel" placeholder="10-digit mobile number" value="8002856232" required>
+      </div>
+      <div>
+        <label><small><b>Create Password (min 6 characters) *:</b></small></label>
+        <input id="regPassword" type="password" placeholder="Create a password" required>
+      </div>
+      <button class="btn primary" type="submit">Create Account & Continue →</button>
+    </form>
+
+    <div style="text-align:center;margin-top:10px;font-size:12.5px;color:#64748b;">
+      School Helpline: <b>8002856232</b> · Email: <b>gissupaul@gmail.com</b>
     </div>
   </div>
 
-  <!-- Authenticated Portal View -->
-  <div id="portalApp" class="portal-app hidden">
-    <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;padding:20px 24px;border-radius:14px;border:1px solid #e2e8f0;margin-bottom:24px;">
-      <div>
-        <h2 style="margin:0;color:#0b4f9c;" id="portalStudentName">Aman Kumar</h2>
-        <p style="margin:4px 0 0;color:#64748b;" id="portalStudentMeta">Class VIII-A &nbsp;•&nbsp; Admission No: GIS-001 &nbsp;•&nbsp; Parent: Ramesh Kumar</p>
-      </div>
-      <button class="btn btn-sm btn-danger" onclick="portalLogout()">Sign Out</button>
-    </div>
 
-    <!-- Student Metric Cards -->
-    <div class="metric-grid">
-      <div><b id="portalAttendanceVal">94%</b><span>Attendance (Current Term)</span></div>
-      <div><b id="portalFeeVal">₹5,000</b><span>Fee Due</span></div>
-      <div><b id="portalGradeVal">A (88%)</b><span>Term Aggregate</span></div>
-      <div><b>Active</b><span>Academic Status</span></div>
-    </div>
-
-    <!-- Features -->
-    <div class="cards">
-      <article>
-        <div class="icon">📅</div>
-        <h3>Attendance Record</h3>
-        <p>184 Days Present · 12 Days Absent / Leave</p>
-        <div id="portalAttendanceSnippet" style="margin-top:10px;font-size:13px;color:#15803d;font-weight:600;">✓ Marked Present Today</div>
-      </article>
-
-      <article>
-        <div class="icon">💳</div>
-        <h3>Fee Receipts & Payment</h3>
-        <p>Annual / Term fee invoices and digital receipts.</p>
-        <button class="btn primary" onclick="payDemo()" style="margin-top:10px;">Pay Online (₹5,000)</button>
-      </article>
-
-      <article>
-        <div class="icon">📊</div>
-        <h3>Term Results & Report Card</h3>
-        <p>Official progress report certified by faculty.</p>
-        <button class="btn outline" onclick="printReport()" style="margin-top:10px;">Download PDF Report Card</button>
-      </article>
-
-      <article>
-        <div class="icon">📢</div>
-        <h3>School Notices & Circulars</h3>
-        <div id="portalNoticeSnippet">
-          <p style="margin:4px 0;font-size:13px;color:#334155;"><b>Admissions Open 2026-27</b>: Sibling discount available.</p>
-          <p style="margin:4px 0;font-size:13px;color:#334155;"><b>Upcoming Exam</b>: Term final schedule released.</p>
+  <!-- ============================================================
+       VIEW 2: 12-STEP ADMISSION & ENROLLMENT WIZARD
+       ============================================================ -->
+  <div id="onboardingApp" class="hidden">
+    
+    <!-- 21st.dev / Magic Onboarding Stepper Header -->
+    <div class="panel" style="margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid #e2e8f0;padding-bottom:15px;">
+        <div>
+          <span style="font-size:11.5px;font-weight:800;letter-spacing:1px;color:#0b4f9c;">ADMISSION LIFECYCLE 2026–27</span>
+          <h2 style="margin:2px 0 0;color:#0f172a;" id="appStageTitle">Step 1: Select Course & Grade</h2>
         </div>
-      </article>
+        <div>
+          <span class="step-pill active" id="appNoBadge">App No: APP-2026-001</span>
+        </div>
+      </div>
+
+      <!-- Stepper Pills -->
+      <div class="workflow-stepper" id="wizardStepper" style="margin-top:18px;">
+        <span class="step-pill active" id="stepPill1">1. Select Course</span>
+        <span class="step-pill" id="stepPill2">2. Fill Application</span>
+        <span class="step-pill" id="stepPill3">3. Upload Documents</span>
+        <span class="step-pill" id="stepPill4">4. Pay App Fee</span>
+        <span class="step-pill" id="stepPill5">5. Review & Submit</span>
+        <span class="step-pill" id="stepPill6">6. Verification & Merit</span>
+        <span class="step-pill" id="stepPill7">7. Pay Admission Fee</span>
+        <span class="step-pill" id="stepPill8">8. Student Dashboard</span>
+      </div>
     </div>
+
+    <!-- STEP 1: SELECT COURSE -->
+    <div id="stepSelectCourse" class="wizard-step">
+      <div class="section-head" style="margin-bottom:20px;">
+        <h3>Select Course / Grade Level</h3>
+        <p>Choose the target academic class to review seat availability, eligibility, and fee schedule.</p>
+      </div>
+
+      <div class="cards" id="courseCardsGrid">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+
+    <!-- STEP 2: FILL APPLICATION FORM -->
+    <div id="stepFillApplication" class="wizard-step hidden">
+      <div class="panel">
+        <h3>Student & Parent Application Details</h3>
+        <p style="color:#64748b;font-size:14px;margin-bottom:20px;">Selected Grade: <b id="selectedCourseLabel">Middle School (Class VI to VIII)</b></p>
+        
+        <form id="formWizardApp" onsubmit="event.preventDefault(); saveApplicationStep();" class="form-grid">
+          <div>
+            <label><small><b>Applicant Full Name *</b></small></label>
+            <input id="appFullName" placeholder="Student name as per Birth Certificate" required>
+          </div>
+          <div>
+            <label><small><b>Date of Birth *</b></small></label>
+            <input id="appDob" type="date" required>
+          </div>
+          <div>
+            <label><small><b>Gender *</b></small></label>
+            <select id="appGender">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label><small><b>Blood Group</b></small></label>
+            <select id="appBlood">
+              <option value="B+">B+</option>
+              <option value="O+">O+</option>
+              <option value="A+">A+</option>
+              <option value="AB+">AB+</option>
+              <option value="A-">A-</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+
+          <div>
+            <label><small><b>Father's / Mother's Name *</b></small></label>
+            <input id="appParentName" placeholder="Parent or Guardian Name" required>
+          </div>
+          <div>
+            <label><small><b>Parent Contact Number *</b></small></label>
+            <input id="appParentPhone" type="tel" value="8002856232" placeholder="Mobile Number" required>
+          </div>
+
+          <div>
+            <label><small><b>Parent Email Address</b></small></label>
+            <input id="appParentEmail" type="email" placeholder="parent@gmail.com">
+          </div>
+          <div>
+            <label><small><b>Previous School Name</b></small></label>
+            <input id="appPrevSchool" placeholder="Name of last attended school">
+          </div>
+
+          <div>
+            <label><small><b>Previous Marks / Grade (%)</b></small></label>
+            <input id="appMarks" type="number" step="0.1" placeholder="e.g. 88.5">
+          </div>
+          <div>
+            <label><small><b>Permanent Address *</b></small></label>
+            <input id="appAddress" placeholder="Village / Town, Khanpur, Samastipur" required>
+          </div>
+
+          <div style="grid-column:1/-1;display:flex;justify-content:space-between;margin-top:10px;">
+            <button type="button" class="btn outline" onclick="goToStep(1)">← Back to Courses</button>
+            <button type="submit" class="btn primary">Save & Proceed to Documents →</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- STEP 3: UPLOAD DOCUMENTS -->
+    <div id="stepUploadDocs" class="wizard-step hidden">
+      <div class="panel">
+        <h3>Upload Required Verification Documents</h3>
+        <p style="color:#64748b;font-size:14px;margin-bottom:20px;">Upload clear scans or photos (JPG, PNG, PDF up to 10MB each).</p>
+
+        <div class="cards" style="grid-template-columns:repeat(2, 1fr);gap:18px;">
+          <!-- Doc 1: Photo -->
+          <article>
+            <b>1. Passport Size Photograph *</b>
+            <p style="font-size:13px;color:#64748b;">Recent color photo of student</p>
+            <input type="file" id="filePhoto" accept="image/*" onchange="simulateDocUpload('Student Photograph', this)">
+            <div id="statusDocPhoto" style="margin-top:8px;"><span class="badge badge-pending">Pending Upload</span></div>
+          </article>
+
+          <!-- Doc 2: Birth Certificate -->
+          <article>
+            <b>2. Municipal Birth Certificate *</b>
+            <p style="font-size:13px;color:#64748b;">Issued by Municipal Corporation or Panchayat</p>
+            <input type="file" id="fileBirth" onchange="simulateDocUpload('Birth Certificate', this)">
+            <div id="statusDocBirth" style="margin-top:8px;"><span class="badge badge-pending">Pending Upload</span></div>
+          </article>
+
+          <!-- Doc 3: Previous Marksheet / Report -->
+          <article>
+            <b>3. Previous Class Marksheet / TC</b>
+            <p style="font-size:13px;color:#64748b;">Transfer certificate or last annual marksheet</p>
+            <input type="file" id="fileMarksheet" onchange="simulateDocUpload('Previous Marksheet', this)">
+            <div id="statusDocMarksheet" style="margin-top:8px;"><span class="badge badge-pending">Pending Upload</span></div>
+          </article>
+
+          <!-- Doc 4: Aadhar Card -->
+          <article>
+            <b>4. Aadhar Card (Student / Parent)</b>
+            <p style="font-size:13px;color:#64748b;">Identity & address verification</p>
+            <input type="file" id="fileAadhar" onchange="simulateDocUpload('Aadhar Card', this)">
+            <div id="statusDocAadhar" style="margin-top:8px;"><span class="badge badge-pending">Pending Upload</span></div>
+          </article>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:25px;">
+          <button class="btn outline" onclick="goToStep(2)">← Back to Form</button>
+          <button class="btn primary" onclick="goToStep(4)">Proceed to Application Fee Payment →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: PAY APPLICATION FEE -->
+    <div id="stepPayAppFee" class="wizard-step hidden">
+      <div class="panel" style="max-width:650px;margin:auto;">
+        <div style="text-align:center;">
+          <div class="icon">💳</div>
+          <h2 style="margin:5px 0;">Application Processing Fee</h2>
+          <p style="color:#64748b;">One-time non-refundable application fee for verification & entrance evaluation.</p>
+          <div style="font-size:38px;color:#0b4f9c;font-weight:900;margin:15px 0;" id="appFeeDisplay">₹500</div>
+        </div>
+
+        <div class="fee-box" style="margin:20px 0;">
+          <div>
+            <b>Online Gateway Demo (Razorpay / UPI / Cards)</b>
+            <p style="margin:2px 0;font-size:13px;color:#64748b;">Instant automated digital receipt generation.</p>
+          </div>
+          <button class="btn primary" onclick="processApplicationFeePayment()">Pay ₹500 (Demo)</button>
+        </div>
+
+        <div id="appFeeReceiptBox" class="hidden" style="background:#dcfce7;border:1px solid #86efac;padding:15px;border-radius:10px;text-align:center;">
+          <b style="color:#15803d;">✓ Payment Successful! Receipt Issued: <span id="appReceiptNo">REC-APP-001</span></b>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:25px;">
+          <button class="btn outline" onclick="goToStep(3)">← Back to Documents</button>
+          <button id="btnProceedSubmit" class="btn primary hidden" onclick="goToStep(5)">Review & Final Submit →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: REVIEW & FINAL SUBMISSION -->
+    <div id="stepReviewSubmit" class="wizard-step hidden">
+      <div class="panel">
+        <h3>Review Application Before Final Submission</h3>
+        <p style="color:#64748b;font-size:14px;margin-bottom:20px;">Once submitted, your application will be routed to the school verification committee.</p>
+
+        <div style="background:#f8fafc;padding:22px;border-radius:12px;border:1px solid #e2e8f0;display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="reviewSummaryBox">
+          <!-- Summary injected via JS -->
+        </div>
+
+        <div style="margin-top:25px;display:flex;justify-content:space-between;">
+          <button class="btn outline" onclick="goToStep(4)">← Back</button>
+          <button class="btn primary" style="font-size:15px;padding:12px 28px;" onclick="confirmFinalSubmission()">🚀 Lock & Submit Application</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6: VERIFICATION & MERIT SELECTION STATUS -->
+    <div id="stepVerificationStatus" class="wizard-step hidden">
+      <div class="panel" style="text-align:center;padding:40px 20px;">
+        <div style="font-size:60px;margin-bottom:10px;">📋</div>
+        <h2 style="color:#0b4f9c;margin:0 0 6px;">Application Under Review</h2>
+        <p style="color:#64748b;max-width:600px;margin:auto;">
+          Your application <b id="trackingAppNo">APP-2026-001</b> has been received. Our academic admissions committee is verifying submitted certificates and preparing the selection merit list.
+        </p>
+
+        <div style="margin:25px auto;max-width:500px;background:#f8fafc;padding:18px;border-radius:12px;border:1px solid #e2e8f0;text-align:left;">
+          <p><b>Current Stage:</b> <span class="step-pill active" id="trackerStagePill">Verification</span></p>
+          <p><b>Status:</b> <span class="badge badge-new" id="trackerStatusPill">Pending Verification</span></p>
+          <p><b>Remarks:</b> <span id="trackerRemarks" style="color:#64748b;">Documents queued for verification.</span></p>
+        </div>
+
+        <div id="admissionApprovedActionBox" class="hidden" style="margin-top:25px;background:#dcfce7;border:1px solid #86efac;padding:25px;border-radius:14px;max-width:650px;margin-left:auto;margin-right:auto;">
+          <h3 style="color:#15803d;margin:0 0 8px;">🎉 Congratulations! Admission Approved!</h3>
+          <p style="color:#166534;margin:0 0 15px;">Your application has met all academic standards. Download your official provisional admission letter below and proceed to pay the admission fee.</p>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <button class="btn outline" onclick="downloadAdmissionLetter()">📜 View / Print Admission Letter</button>
+            <button class="btn primary" onclick="goToStep(7)">Proceed to Admission Fee Payment →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 7: PAY ADMISSION FEE -->
+    <div id="stepPayAdmissionFee" class="wizard-step hidden">
+      <div class="panel" style="max-width:650px;margin:auto;">
+        <div style="text-align:center;">
+          <div class="icon">🎓</div>
+          <h2 style="margin:5px 0;">Official Admission & Enrollment Fee</h2>
+          <p style="color:#64748b;">Final step: Pay term admission fee to generate your permanent Admission Number and Student ID.</p>
+          <div style="font-size:38px;color:#15803d;font-weight:900;margin:15px 0;">₹5,000</div>
+        </div>
+
+        <div class="fee-box" style="margin:20px 0;">
+          <div>
+            <b>Term Fee Checkout</b>
+            <p style="margin:2px 0;font-size:13px;color:#64748b;">Includes registration, curriculum material, activity kit & library.</p>
+          </div>
+          <button class="btn primary" onclick="processAdmissionFeePayment()">Pay ₹5,000 & Enroll</button>
+        </div>
+
+        <div id="admFeeReceiptBox" class="hidden" style="background:#dcfce7;border:1px solid #86efac;padding:15px;border-radius:10px;text-align:center;">
+          <b style="color:#15803d;">✓ Admission Fee Confirmed! Enrollment No: <span id="enrNoDisplay">ENR-2026-104</span></b>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 8: COMPLETE STUDENT DASHBOARD -->
+    <div id="stepStudentDashboard" class="wizard-step hidden">
+      <!-- Welcome Student Banner -->
+      <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;padding:24px;border-radius:16px;border:1px solid #e2e8f0;margin-bottom:24px;">
+        <div>
+          <span style="font-size:11.5px;font-weight:800;color:#0b4f9c;letter-spacing:1px;">STUDENT ENROLLED & ACTIVE</span>
+          <h2 style="margin:4px 0;color:#0f172a;" id="dashStudentName">Aman Kumar</h2>
+          <p style="margin:0;color:#64748b;" id="dashStudentMeta">Admission No: <b>GIS-001</b> · Class VIII-A · Roll No: 101</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn outline" onclick="printID()">🪪 Print ID Card</button>
+          <button class="btn primary" onclick="downloadAdmissionLetter()">📜 Admission Letter</button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics -->
+      <div class="metric-grid">
+        <div><b>94%</b><span>Attendance This Term</span></div>
+        <div><b style="color:#15803d;">PAID</b><span>Admission Fee Status</span></div>
+        <div><b>A (88%)</b><span>Term Grade Average</span></div>
+        <div><b>Active</b><span>Enrolled Status</span></div>
+      </div>
+
+      <!-- Dashboard Services Bento -->
+      <div class="cards">
+        <article>
+          <div class="icon">📅</div>
+          <h3>Daily Attendance Record</h3>
+          <p>184 Days Present · 12 Days Leave/Absent</p>
+          <div style="font-size:13px;color:#15803d;font-weight:600;margin-top:8px;">✓ Present Today</div>
+        </article>
+
+        <article>
+          <div class="icon">💳</div>
+          <h3>Fee Invoices & Receipts</h3>
+          <p>Admission Fee (₹5,000): <span class="badge badge-paid">Paid</span></p>
+          <p style="font-size:13px;color:#64748b;margin-top:6px;">Session Fee (Due 10 April): ₹5,000</p>
+          <button class="btn btn-sm primary" style="margin-top:8px;" onclick="payDemo()">Pay Session Fee</button>
+        </article>
+
+        <article>
+          <div class="icon">📊</div>
+          <h3>Annual Progress Report</h3>
+          <p>Term exam marksheet certified by faculty.</p>
+          <button class="btn btn-sm outline" style="margin-top:10px;" onclick="printReport()">Download PDF Report Card</button>
+        </article>
+
+        <article>
+          <div class="icon">📢</div>
+          <h3>Notices & Circulars</h3>
+          <div style="font-size:13px;color:#334155;">
+            <p style="margin:4px 0;"><b>Session 2026-27</b>: Orientation starts April 1.</p>
+            <p style="margin:4px 0;"><b>Uniform & Books</b>: Distribution at school counter.</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Profile Self-Service Card -->
+      <div class="panel" style="margin-top:25px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <h3 style="margin:0;">User Account & Security</h3>
+            <p style="margin:4px 0 0;color:#64748b;font-size:13.5px;">Manage your contact phone, address, and password online anytime.</p>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn outline" onclick="openProfileModal()">✏️ Edit Profile</button>
+            <button class="btn outline" onclick="openChangePasswordModal()">🔑 Change Password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </main>
+
+<!-- Change Password Modal (Available to All Users) -->
+<div class="modal-overlay hidden" id="changePasswordModal">
+  <div class="modal-card">
+    <h3>Change Account Password</h3>
+    <p style="color:#64748b;font-size:13px;margin:0 0 10px;">Update your password to keep your account secure.</p>
+    
+    <div>
+      <label><small><b>Current Password *:</b></small></label>
+      <input id="inputCurrentPass" type="password" placeholder="Current password" required>
+    </div>
+    <div>
+      <label><small><b>New Password (min 6 chars) *:</b></small></label>
+      <input id="inputNewPass" type="password" placeholder="New password" required>
+    </div>
+    <div>
+      <label><small><b>Confirm New Password *:</b></small></label>
+      <input id="inputConfirmPass" type="password" placeholder="Re-enter new password" required>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn outline" onclick="closeModal('changePasswordModal')">Cancel</button>
+      <button class="btn primary" onclick="submitChangePassword()">Update Password</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal (Available to All Users) -->
+<div class="modal-overlay hidden" id="editProfileModal">
+  <div class="modal-card">
+    <h3>Edit Profile Information</h3>
+    <div>
+      <label><small><b>Full Name *:</b></small></label>
+      <input id="inputProfileName" placeholder="Full name">
+    </div>
+    <div>
+      <label><small><b>Phone Number *:</b></small></label>
+      <input id="inputProfilePhone" placeholder="Mobile number">
+    </div>
+    <div class="modal-actions">
+      <button class="btn outline" onclick="closeModal('editProfileModal')">Cancel</button>
+      <button class="btn primary" onclick="submitUpdateProfile()">Save Profile</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast"></div>
 
 <script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>
-  async function portalLogin() {
-    const query = document.getElementById('portalStudentQuery')?.value.trim();
-    const pin = document.getElementById('portalPin')?.value.trim();
+  // ==========================================
+  // PORTAL & 12-STEP ONBOARDING CONTROLLER
+  // ==========================================
+  let activeUser = null;
+  let currentCourse = null;
+  let currentApp = null;
+  let allCourses = [];
 
-    if (!query) {
-      alert('Please enter your Admission Number or registered Mobile Number.');
-      return;
-    }
-
-    if (pin && pin !== '1234') {
-      alert('Invalid PIN. For demo access, please use PIN 1234.');
-      return;
-    }
-
-    // Lookup from server API
-    const res = await api('/api/portal/student/' + encodeURIComponent(query));
-    if (res.ok && res.data?.student) {
-      const { student, attendance, fees } = res.data;
-      document.getElementById('portalStudentName').textContent = student.name;
-      document.getElementById('portalStudentMeta').textContent = 
-        `${student.class_name || 'Class VIII'} ${student.section ? '-' + student.section : ''} • Admission No: ${student.admission_no} • Parent: ${student.parent_name || 'Guardian'}`;
-      
-      if (fees && fees.length > 0) {
-        document.getElementById('portalFeeVal').textContent = '₹' + Number(fees[0].amount).toLocaleString('en-IN');
-      }
+  function switchAuthTab(tab) {
+    if (tab === 'login') {
+      document.getElementById('formLogin').classList.remove('hidden');
+      document.getElementById('formRegister').classList.add('hidden');
+      document.getElementById('tabBtnLogin').className = 'btn primary';
+      document.getElementById('tabBtnRegister').className = 'btn ghost';
     } else {
-      document.getElementById('portalStudentName').textContent = query === 'GIS-001' ? 'Aman Kumar' : 'Student: ' + query;
+      document.getElementById('formLogin').classList.add('hidden');
+      document.getElementById('formRegister').classList.remove('hidden');
+      document.getElementById('tabBtnLogin').className = 'btn ghost';
+      document.getElementById('tabBtnRegister').className = 'btn primary';
+    }
+  }
+
+  function fillDemoLogin(email, pass) {
+    document.getElementById('loginEmail').value = email;
+    document.getElementById('loginPassword').value = pass;
+    handleUserLogin();
+  }
+
+  async function handleUserLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    const res = await api('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+
+    if (res.ok && res.data?.token) {
+      setToken(res.data.token, res.data.user);
+      activeUser = res.data.user;
+      toast(`Welcome back, ${activeUser.full_name || activeUser.email}!`);
+      loadUserPortal();
+    } else {
+      toast(res.data?.error || 'Invalid credentials');
+    }
+  }
+
+  async function handleUserRegister() {
+    const full_name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const password = document.getElementById('regPassword').value;
+
+    const res = await api('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ full_name, email, phone, password })
+    });
+
+    if (res.ok && res.data?.token) {
+      setToken(res.data.token, res.data.user);
+      activeUser = res.data.user;
+      toast(`Account created! Welcome, ${full_name}`);
+      loadUserPortal();
+    } else {
+      toast(res.data?.error || 'Registration failed');
+    }
+  }
+
+  async function loadUserPortal() {
+    const res = await api('/api/me');
+    if (!res.ok || !res.data?.user) {
+      document.getElementById('authCard').classList.remove('hidden');
+      document.getElementById('onboardingApp').classList.add('hidden');
+      document.getElementById('navUserArea').classList.add('hidden');
+      return;
     }
 
-    document.getElementById('portalLoginCard').classList.add('hidden');
-    document.getElementById('portalApp').classList.remove('hidden');
-    toast('Welcome to the Student / Parent Portal');
+    activeUser = res.data.user;
+    currentApp = res.data.application;
+
+    // Show Nav User controls
+    document.getElementById('authCard').classList.add('hidden');
+    document.getElementById('onboardingApp').classList.remove('hidden');
+    document.getElementById('navUserArea').classList.remove('hidden');
+    document.getElementById('navUserName').textContent = activeUser.full_name || activeUser.email;
+
+    // Load available courses
+    const cRes = await api('/api/courses');
+    allCourses = cRes.ok ? cRes.data : [];
+    renderCourseCards();
+
+    // Determine current step based on application status
+    if (!currentApp) {
+      goToStep(1); // Select Course
+    } else {
+      document.getElementById('appNoBadge').textContent = 'App No: ' + currentApp.application_no;
+      document.getElementById('trackingAppNo').textContent = currentApp.application_no;
+
+      if (currentApp.stage === 'Enrollment' && currentApp.status === 'admitted') {
+        goToStep(8); // Full Student Dashboard
+        loadStudentDashboard();
+      } else if (currentApp.stage === 'Admission Approval' || currentApp.status === 'approved') {
+        goToStep(6);
+        document.getElementById('admissionApprovedActionBox').classList.remove('hidden');
+      } else if (currentApp.stage === 'Fee Payment') {
+        goToStep(7);
+      } else if (currentApp.stage === 'Verification' || currentApp.stage === 'Selection') {
+        goToStep(6);
+      } else if (currentApp.stage === 'Documents') {
+        goToStep(3);
+      } else {
+        goToStep(2);
+      }
+    }
+  }
+
+  function renderCourseCards() {
+    const grid = document.getElementById('courseCardsGrid');
+    if (!grid) return;
+
+    grid.innerHTML = allCourses.map(c => `
+      <article style="border:2px solid #e2e8f0;border-radius:14px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <span style="font-size:11px;font-weight:800;color:#0b4f9c;letter-spacing:1px;text-transform:uppercase;">${esc(c.level)}</span>
+          <h3 style="margin:6px 0 8px;color:#0f172a;">${esc(c.name)}</h3>
+          <p style="color:#64748b;font-size:13.5px;margin-bottom:12px;">${esc(c.description)}</p>
+          <div style="background:#f8fafc;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;">
+            <div><b>Application Fee:</b> ₹${c.application_fee}</div>
+            <div><b>Admission Fee:</b> ₹${c.admission_fee}</div>
+            <div><b>Seats Available:</b> ${c.available_seats || c.seats} / ${c.seats}</div>
+          </div>
+        </div>
+        <button class="btn primary" onclick="selectCourseForApplication(${c.id})">Apply for ${esc(c.name)} →</button>
+      </article>
+    `).join('');
+  }
+
+  function selectCourseForApplication(courseId) {
+    currentCourse = allCourses.find(c => c.id === courseId);
+    if (!currentCourse) return;
+
+    document.getElementById('selectedCourseLabel').textContent = currentCourse.name;
+    document.getElementById('appFeeDisplay').textContent = `₹${currentCourse.application_fee || 500}`;
+    if (activeUser) {
+      document.getElementById('appFullName').value = activeUser.full_name || '';
+      document.getElementById('appParentPhone').value = activeUser.phone || '8002856232';
+      document.getElementById('appParentEmail').value = activeUser.email || '';
+    }
+    goToStep(2);
+  }
+
+  function goToStep(stepNum) {
+    // Hide all steps
+    document.querySelectorAll('.wizard-step').forEach(el => el.classList.add('hidden'));
+
+    // Highlight pills
+    for (let i = 1; i <= 8; i++) {
+      const pill = document.getElementById('stepPill' + i);
+      if (pill) {
+        if (i === stepNum) pill.className = 'step-pill active';
+        else if (i < stepNum) pill.className = 'step-pill';
+        else pill.className = 'step-pill';
+      }
+    }
+
+    const stepMap = {
+      1: { id: 'stepSelectCourse', title: 'Step 1: Select Course & Grade' },
+      2: { id: 'stepFillApplication', title: 'Step 2: Fill Application Details' },
+      3: { id: 'stepUploadDocs', title: 'Step 3: Upload Documents' },
+      4: { id: 'stepPayAppFee', title: 'Step 4: Pay Application Fee' },
+      5: { id: 'stepReviewSubmit', title: 'Step 5: Review & Final Submission' },
+      6: { id: 'stepVerificationStatus', title: 'Step 6: Verification & Selection Status' },
+      7: { id: 'stepPayAdmissionFee', title: 'Step 7: Pay Admission Fee' },
+      8: { id: 'stepStudentDashboard', title: 'Step 8: Enrolled Student Dashboard' }
+    };
+
+    const target = stepMap[stepNum];
+    if (target) {
+      document.getElementById(target.id)?.classList.remove('hidden');
+      document.getElementById('appStageTitle').textContent = target.title;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function saveApplicationStep() {
+    const applicant_name = document.getElementById('appFullName').value.trim();
+    const dob = document.getElementById('appDob').value;
+    const gender = document.getElementById('appGender').value;
+    const parent_name = document.getElementById('appParentName').value.trim();
+    const parent_phone = document.getElementById('appParentPhone').value.trim();
+    const parent_email = document.getElementById('appParentEmail').value.trim();
+    const previous_school = document.getElementById('appPrevSchool').value.trim();
+    const marks_obtained = document.getElementById('appMarks').value;
+    const permanent_address = document.getElementById('appAddress').value.trim();
+
+    const payload = {
+      course_id: currentCourse?.id || 1,
+      applicant_name,
+      dob,
+      gender,
+      parent_name,
+      parent_phone,
+      parent_email,
+      previous_school,
+      marks_obtained,
+      permanent_address
+    };
+
+    const res = await api('/api/applications', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok && res.data?.application) {
+      currentApp = res.data.application;
+      document.getElementById('appNoBadge').textContent = 'App No: ' + currentApp.application_no;
+      toast('Application details saved!');
+      goToStep(3);
+    } else {
+      toast('Error saving application: ' + (res.data?.error || 'Please check all fields'));
+    }
+  }
+
+  function simulateDocUpload(docType, inputEl) {
+    if (!inputEl.files || !inputEl.files[0]) return;
+    const file = inputEl.files[0];
+
+    (async () => {
+      if (currentApp) {
+        await api(`/api/applications/${currentApp.id}/documents`, {
+          method: 'POST',
+          body: JSON.stringify({ document_type: docType, file_name: file.name })
+        });
+      }
+      toast(`${docType} uploaded successfully!`);
+
+      if (docType.includes('Photo')) document.getElementById('statusDocPhoto').innerHTML = '<span class="badge badge-paid">✓ Uploaded</span>';
+      if (docType.includes('Birth')) document.getElementById('statusDocBirth').innerHTML = '<span class="badge badge-paid">✓ Uploaded</span>';
+      if (docType.includes('Marksheet')) document.getElementById('statusDocMarksheet').innerHTML = '<span class="badge badge-paid">✓ Uploaded</span>';
+      if (docType.includes('Aadhar')) document.getElementById('statusDocAadhar').innerHTML = '<span class="badge badge-paid">✓ Uploaded</span>';
+    })();
+  }
+
+  async function processApplicationFeePayment() {
+    if (!currentApp) return alert('No application found');
+    const res = await api(`/api/applications/${currentApp.id}/pay-application-fee`, { method: 'POST' });
+    if (res.ok) {
+      document.getElementById('appFeeReceiptBox').classList.remove('hidden');
+      document.getElementById('appReceiptNo').textContent = res.data?.receipt_no || 'REC-APP-101';
+      document.getElementById('btnProceedSubmit').classList.remove('hidden');
+      toast('Application fee paid successfully!');
+    }
+  }
+
+  function confirmFinalSubmission() {
+    goToStep(6);
+    document.getElementById('trackerStagePill').textContent = 'Verification';
+    document.getElementById('trackerStatusPill').textContent = 'Pending Verification';
+    toast('Application submitted for committee verification!');
+  }
+
+  async function processAdmissionFeePayment() {
+    if (!currentApp) return alert('No application found');
+    const res = await api(`/api/applications/${currentApp.id}/pay-admission-fee`, { method: 'POST' });
+    if (res.ok) {
+      // Complete enrollment
+      const enrRes = await api(`/api/applications/${currentApp.id}/enroll`, { method: 'POST' });
+      toast('Admission fee paid and official enrollment complete! 🎓');
+      goToStep(8);
+      loadStudentDashboard();
+    }
+  }
+
+  async function loadStudentDashboard() {
+    const res = await api('/api/me');
+    if (res.ok && res.data) {
+      const { user, student, application } = res.data;
+      if (student) {
+        document.getElementById('dashStudentName').textContent = student.name;
+        document.getElementById('dashStudentMeta').innerHTML = 
+          `Admission No: <b>${student.admission_no}</b> · ${student.class_name || 'Class VIII'} · Section ${student.section || 'A'}`;
+      } else if (application) {
+        document.getElementById('dashStudentName').textContent = application.applicant_name;
+        document.getElementById('dashStudentMeta').innerHTML = 
+          `Admission No: <b>GIS-001</b> · Application No: ${application.application_no}`;
+      }
+    }
+  }
+
+  function downloadAdmissionLetter() {
+    if (currentApp) {
+      window.open(`/api/applications/${currentApp.id}/admission-letter`, '_blank');
+    } else {
+      window.open('/api/applications/1/admission-letter', '_blank');
+    }
+  }
+
+  // Modals for Change Password and Profile Update
+  function openChangePasswordModal() {
+    document.getElementById('changePasswordModal').classList.remove('hidden');
+  }
+
+  async function submitChangePassword() {
+    const current_password = document.getElementById('inputCurrentPass').value;
+    const new_password = document.getElementById('inputNewPass').value;
+    const confirm_pass = document.getElementById('inputConfirmPass').value;
+
+    if (!current_password || !new_password) return alert('Please enter both current and new password');
+    if (new_password !== confirm_pass) return alert('New password and confirmation do not match');
+
+    const res = await api('/api/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ current_password, new_password })
+    });
+
+    if (res.ok) {
+      toast('Password updated successfully!');
+      closeModal('changePasswordModal');
+    } else {
+      alert(res.data?.error || 'Failed to update password');
+    }
+  }
+
+  function openProfileModal() {
+    if (activeUser) {
+      document.getElementById('inputProfileName').value = activeUser.full_name || '';
+      document.getElementById('inputProfilePhone').value = activeUser.phone || '';
+    }
+    document.getElementById('editProfileModal').classList.remove('hidden');
+  }
+
+  async function submitUpdateProfile() {
+    const full_name = document.getElementById('inputProfileName').value.trim();
+    const phone = document.getElementById('inputProfilePhone').value.trim();
+
+    const res = await api('/api/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify({ full_name, phone })
+    });
+
+    if (res.ok) {
+      activeUser.full_name = full_name;
+      activeUser.phone = phone;
+      document.getElementById('navUserName').textContent = full_name;
+      toast('Profile information updated!');
+      closeModal('editProfileModal');
+    } else {
+      alert(res.data?.error || 'Failed to update profile');
+    }
   }
 
   function portalLogout() {
-    document.getElementById('portalApp').classList.add('hidden');
-    document.getElementById('portalLoginCard').classList.remove('hidden');
-    toast('Logged out');
+    setToken('');
+    activeUser = null;
+    toast('Signed out');
+    location.reload();
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadUserPortal();
+  });
 </script>
 </body>
 </html>
