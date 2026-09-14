@@ -20,6 +20,7 @@
   </a>
 
   <div style="display:flex;align-items:center;gap:12px;">
+    <button class="btn btn-sm outline" id="btnPortalLang" onclick="toggleLang()">हिन्दी / English</button>
     <a class="btn outline" href="index.html">← School Website</a>
     <a class="btn outline" href="admin.html">Admin Portal</a>
     
@@ -990,6 +991,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    if (typeof applyLang === 'function') applyLang(localStorage.getItem('gis_lang') || 'en');
     loadUserPortal();
   });
 </script>

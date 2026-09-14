@@ -76,12 +76,12 @@
       <h2 id="pageTitle">Dashboard</h2>
     </div>
     <div class="dash-top-right">
-      <button class="btn btn-sm outline" onclick="toggleLang()">हिन्दी / English</button>
+      <button class="btn btn-sm outline" id="btnLangToggle" onclick="toggleLang()">हिन्दी / English</button>
       <div class="admin-user" style="cursor:pointer;" onclick="openAdminPasswordModal()">
         <span>👤</span>
         <span id="adminEmailBadge">gissupaul@gmail.com</span>
       </div>
-      <button class="btn btn-sm outline" onclick="openAdminPasswordModal()">🔑 Password</button>
+      <button class="btn btn-sm outline" id="btnAdminPass" onclick="openAdminPasswordModal()">🔑 Password</button>
       <button class="btn btn-sm primary" id="btnLogin" onclick="openLoginModal()">Login</button>
       <button class="btn btn-sm btn-danger" id="btnLogout" onclick="logoutAdmin()">Logout</button>
     </div>
@@ -94,20 +94,20 @@
     <div class="dash-grid">
       <div class="panel">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <h3 style="margin:0;">Recent Admission Applications</h3>
-          <button class="btn btn-sm outline" onclick="showTab('all-applications')">View All Applications →</button>
+          <h3 id="dashRecentTitle" style="margin:0;">Recent Admission Applications</h3>
+          <button id="dashViewAllBtn" class="btn btn-sm outline" onclick="showTab('all-applications')">View All Applications →</button>
         </div>
         <div id="recentAdmissions"></div>
       </div>
       <div class="panel">
-        <h3>System & Server Health</h3>
+        <h3 id="dashHealthTitle">System & Server Health</h3>
         <div class="health">
-          <p><span>🌐 Web Server</span><b>🟢 Online (:3000)</b></p>
-          <p><span>🗄️ Database Store</span><b>🟢 Active & Seeded</b></p>
-          <p><span>🔒 Security Headers</span><b>🟢 Helmet Active</b></p>
-          <p><span>🔑 JWT Authentication</span><b>🟢 Enabled</b></p>
-          <p><span>📞 Official Phone</span><b>🟢 8002856232</b></p>
-          <p><span>✉️ School Email</span><b>🟢 gissupaul@gmail.com</b></p>
+          <p><span id="healthLabelWeb">🌐 Web Server</span><b id="healthValWeb">🟢 Online (:3000)</b></p>
+          <p><span id="healthLabelDb">🗄️ Database Store</span><b id="healthValDb">🟢 Active & Seeded</b></p>
+          <p><span id="healthLabelSec">🔒 Security Headers</span><b id="healthValSec">🟢 Helmet Active</b></p>
+          <p><span id="healthLabelJwt">🔑 JWT Authentication</span><b id="healthValJwt">🟢 Enabled</b></p>
+          <p><span id="healthLabelPhone">📞 Official Phone</span><b>🟢 8002856232</b></p>
+          <p><span id="healthLabelEmail">✉️ School Email</span><b>🟢 gissupaul@gmail.com</b></p>
         </div>
       </div>
     </div>
@@ -165,17 +165,25 @@
     </div>
   </div>
 
-  <!-- TAB 4: PENDING VERIFICATION -->
+  <!-- TAB 4: PENDING VERIFICATION (EDITABLE) -->
   <div id="pending-verification" class="tab">
     <div class="toolbar">
-      <h3>Applications Awaiting Verification</h3>
-      <span style="font-size:13px;color:#64748b;">Applicants who have submitted documents & application fees</span>
+      <div>
+        <h3>Applications Awaiting Verification</h3>
+        <span style="font-size:13px;color:#64748b;">Review application credentials, verify documents, and edit details directly.</span>
+      </div>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>App No</th><th>Applicant</th><th>Documents</th><th>Status</th><th>Review Action</th>
+            <th>App No</th>
+            <th>Applicant Name</th>
+            <th>Course / Grade</th>
+            <th>Parent Mobile</th>
+            <th>Uploaded Docs</th>
+            <th>Verification Status</th>
+            <th>Review & Edit Actions</th>
           </tr>
         </thead>
         <tbody id="tablePendingVerif"></tbody>
@@ -187,18 +195,18 @@
   <div id="doc-verification" class="tab">
     <div class="panel">
       <h3>Document Verification Desk</h3>
-      <p style="color:#64748b;font-size:13.5px;">Inspect uploaded certificates, identity proofs, and marksheets. Approve or flag for correction.</p>
+      <p style="color:#64748b;font-size:13.5px;">Inspect uploaded certificates, identity proofs, and marksheets. Preview documents with 1-click inspection, approve or flag for correction.</p>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>Application No</th>
-            <th>Applicant</th>
+            <th>Applicant Name</th>
             <th>Document Type</th>
-            <th>Uploaded File</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>File Name</th>
+            <th>Verification Status</th>
+            <th>Document View & Actions</th>
           </tr>
         </thead>
         <tbody id="tableDocVerification"></tbody>
@@ -206,15 +214,18 @@
     </div>
   </div>
 
-  <!-- TAB 6: MERIT LIST & WAITLIST -->
+  <!-- TAB 6: MERIT LIST & WAITLIST (EDITABLE & DOWNLOADABLE WITH LOGO) -->
   <div id="merit-list" class="tab">
     <div class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
         <div>
           <h3 style="margin:0;">Selection Merit List & Waitlist 2026–27</h3>
-          <small style="color:#64748b;">Rank applicants based on academic percentage and entrance evaluation.</small>
+          <small style="color:#64748b;">Rank applicants based on academic percentage and entrance evaluation. Live editing and official download with school crest.</small>
         </div>
-        <button class="btn primary" onclick="toast('Merit List officially published!')">📢 Publish Merit List</button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn outline" onclick="printMeritListDoc()">📥 Download / Print Merit List (with Logo)</button>
+          <button class="btn primary" onclick="toast('Merit List officially published for Academic Session 2026–27!')">📢 Publish Merit List</button>
+        </div>
       </div>
     </div>
     <div class="table-wrap">
@@ -227,7 +238,8 @@
             <th>Class</th>
             <th>Percentage</th>
             <th>Selection Status</th>
-            <th>Action</th>
+            <th>Committee Remarks</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="tableMeritList"></tbody>
@@ -235,11 +247,13 @@
     </div>
   </div>
 
-  <!-- TAB 7: APPROVED ADMISSIONS & ADMISSION LETTERS -->
+  <!-- TAB 7: APPROVED ADMISSIONS & ADMISSION LETTERS (WITH LOGO) -->
   <div id="approved-admissions" class="tab">
     <div class="toolbar">
-      <h3>Approved Candidates & Admission Letters</h3>
-      <span style="font-size:13px;color:#64748b;">Official admission letters ready for printing and issuance</span>
+      <div>
+        <h3 style="margin:0;">Approved Candidates & Admission Letters</h3>
+        <span style="font-size:13px;color:#64748b;">Official admission offer letters with school crest logo ready for viewing, PDF export, and printing.</span>
+      </div>
     </div>
     <div class="table-wrap">
       <table>
@@ -249,7 +263,8 @@
             <th>Student Name</th>
             <th>Selected Course</th>
             <th>Parent Contact</th>
-            <th>Letter</th>
+            <th>Admission No</th>
+            <th>Official Letter (with Logo)</th>
             <th>Next Action</th>
           </tr>
         </thead>
@@ -258,11 +273,11 @@
     </div>
   </div>
 
-  <!-- TAB 8: ENROLLMENT DESK -->
+  <!-- TAB 8: ENROLLMENT DESK (STUDENT REGISTRATION & ROLL NUMBERS) -->
   <div id="enrollment-desk" class="tab">
     <div class="panel">
       <h3>Enrollment Desk (Official Student Registration)</h3>
-      <p style="color:#64748b;font-size:13.5px;">Finalize enrollments, generate permanent Student Admission Numbers (e.g. GIS-004), and assign roll numbers.</p>
+      <p style="color:#64748b;font-size:13.5px;">Finalize enrollments, generate permanent Student Admission Numbers (e.g. GIS-004), assign roll numbers, and view candidate documents.</p>
     </div>
     <div class="table-wrap">
       <table>
@@ -270,9 +285,12 @@
           <tr>
             <th>App No</th>
             <th>Student Name</th>
+            <th>Parent / Mobile</th>
             <th>Class & Sec</th>
-            <th>Fee Status</th>
-            <th>Enrollment Action</th>
+            <th>Admission No</th>
+            <th>Roll No</th>
+            <th>Status</th>
+            <th>Enrollment Actions</th>
           </tr>
         </thead>
         <tbody id="tableEnrollmentDesk"></tbody>
@@ -817,6 +835,241 @@
     <div style="background:#f8fafc;padding:12px 24px;display:flex;justify-content:space-between;border-top:1px solid #e2e8f0;" class="no-print">
       <button class="btn ghost" onclick="closeModal('adminPaymentSlipModal')">Close</button>
       <button class="btn primary" onclick="printAdminSlip()">🖨️ Print Receipt</button>
+    </div>
+  </div>
+</div>
+
+<!-- 1. Professional Document Viewer Modal -->
+<div class="modal-overlay hidden" id="docViewerModal">
+  <div class="modal-card" style="max-width:680px;padding:0;overflow:hidden;border:2px solid #0b4f9c;">
+    <div style="background:#0b4f9c;color:#fff;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <img src="assets/logo.svg" alt="Crest" style="width:36px;height:36px;background:#fff;border-radius:50%;padding:2px;">
+        <div>
+          <h3 style="margin:0;font-size:16px;" id="docViewerTitle">Official Document Inspection Desk</h3>
+          <small style="opacity:0.9;" id="docViewerAppMeta">Application: APP-2026-003 • Ananya Kumari</small>
+        </div>
+      </div>
+      <button class="btn btn-sm ghost" style="color:#fff;" onclick="closeModal('docViewerModal')">✕</button>
+    </div>
+    <div style="padding:22px;background:#f8fafc;">
+      <div id="docViewerContent" style="background:#fff;border:2px dashed #cbd5e1;border-radius:10px;padding:24px;text-align:center;min-height:220px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+        <div style="font-size:48px;margin-bottom:8px;" id="docViewerIcon">📄</div>
+        <h4 id="docViewerDocType" style="margin:4px 0;color:#0b4f9c;">Document Type</h4>
+        <div id="docViewerFileName" style="font-family:monospace;font-size:13px;color:#64748b;margin-bottom:12px;">file-name.pdf</div>
+        <div id="docViewerStatusBadge" style="margin-bottom:12px;"><span class="badge badge-paid">✓ Verified</span></div>
+        <div style="font-size:12px;color:#64748b;max-width:440px;line-height:1.5;">
+          Digitally archived in Gyansthali International School Admissions Database. Verified against original proof of identity & state registry.
+        </div>
+      </div>
+      <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12.5px;background:#f1f5f9;padding:12px;border-radius:8px;">
+        <div><b>Document ID:</b> <span id="docViewerId">#DOC-001</span></div>
+        <div><b>Candidate Name:</b> <span id="docViewerApplicant">Ananya Kumari</span></div>
+        <div><b>Parent / Guardian:</b> <span id="docViewerParent">Rajesh Sharma</span></div>
+        <div><b>Verified Mobile:</b> <span id="docViewerPhone">8002856232</span></div>
+      </div>
+    </div>
+    <div style="background:#fff;padding:14px 22px;display:flex;justify-content:space-between;border-top:1px solid #e2e8f0;">
+      <div>
+        <button class="btn btn-sm primary" id="btnApproveDoc" onclick="markDocFromViewer('verified')">✓ Mark Verified</button>
+        <button class="btn btn-sm btn-danger" id="btnFlagDoc" onclick="markDocFromViewer('correction_required')" style="margin-left:6px;">⚠️ Flag for Correction</button>
+      </div>
+      <button class="btn btn-sm outline" onclick="closeModal('docViewerModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. Application Full Review & Edit Modal -->
+<div class="modal-overlay hidden" id="editApplicationModal">
+  <div class="modal-card" style="max-width:720px;">
+    <h3 style="margin-top:0;" id="editAppModalTitle">Review & Edit Application Details</h3>
+    <input type="hidden" id="editAppId">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <label><small><b>Applicant Full Name *:</b></small></label>
+        <input id="editAppCandidateName" required>
+      </div>
+      <div>
+        <label><small><b>Application Number:</b></small></label>
+        <input id="editAppNo" readonly style="background:#f1f5f9;">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px;">
+      <div>
+        <label><small><b>Date of Birth:</b></small></label>
+        <input id="editAppDob" type="date">
+      </div>
+      <div>
+        <label><small><b>Gender:</b></small></label>
+        <select id="editAppGender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div>
+        <label><small><b>Category:</b></small></label>
+        <select id="editAppCategory">
+          <option value="General">General</option>
+          <option value="OBC">OBC</option>
+          <option value="SC">SC</option>
+          <option value="ST">ST</option>
+          <option value="EWS">EWS</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+      <div>
+        <label><small><b>Parent / Guardian Name *:</b></small></label>
+        <input id="editAppParentName" required>
+      </div>
+      <div>
+        <label><small><b>Parent Mobile Number *:</b></small></label>
+        <input id="editAppParentPhone" required placeholder="8002856232">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+      <div>
+        <label><small><b>Parent Email:</b></small></label>
+        <input id="editAppParentEmail" placeholder="gissupaul@gmail.com">
+      </div>
+      <div>
+        <label><small><b>Permanent Address:</b></small></label>
+        <input id="editAppAddress" placeholder="Khairi, Khanpur">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;background:#f8fafc;padding:12px;border-radius:8px;border:1px solid #e2e8f0;">
+      <div>
+        <label><small><b>Application Stage *:</b></small></label>
+        <select id="editAppStage">
+          <option value="Application">Application</option>
+          <option value="Form">Form</option>
+          <option value="Documents">Documents</option>
+          <option value="Verification">Verification</option>
+          <option value="Selection">Selection</option>
+          <option value="Admission Approval">Admission Approval</option>
+          <option value="Fee Payment">Fee Payment</option>
+          <option value="Enrollment">Enrollment</option>
+        </select>
+      </div>
+      <div>
+        <label><small><b>Status *:</b></small></label>
+        <select id="editAppStatus">
+          <option value="new">New</option>
+          <option value="in_progress">In Progress</option>
+          <option value="pending_verification">Pending Verification</option>
+          <option value="approved">Approved</option>
+          <option value="admitted">Admitted / Enrolled</option>
+          <option value="correction_required">Correction Required</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px;">
+      <div>
+        <label><small><b>Academic Percentage (%):</b></small></label>
+        <input id="editAppPercentage" type="number" step="0.1" placeholder="e.g. 88.5">
+      </div>
+      <div>
+        <label><small><b>Merit Rank:</b></small></label>
+        <input id="editAppMeritRank" type="number" placeholder="e.g. 1">
+      </div>
+      <div>
+        <label><small><b>Admission No:</b></small></label>
+        <input id="editAppAdmNo" placeholder="e.g. GIS-004">
+      </div>
+    </div>
+    <div style="margin-top:10px;">
+      <label><small><b>Verification Remarks:</b></small></label>
+      <input id="editAppRemarks" placeholder="e.g. Selected on merit rank #1. Document verification complete.">
+    </div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn outline" onclick="closeModal('editApplicationModal')">Cancel</button>
+      <button class="btn primary" onclick="submitApplicationEdit()">Save Application Details</button>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Selection Merit List & Evaluation Edit Modal -->
+<div class="modal-overlay hidden" id="editMeritModal">
+  <div class="modal-card" style="max-width:540px;">
+    <h3 style="margin-top:0;">Edit Merit Evaluation & Selection</h3>
+    <input type="hidden" id="editMeritAppId">
+    <div>
+      <label><small><b>Candidate:</b></small></label>
+      <input id="editMeritCandidate" readonly style="background:#f1f5f9;">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+      <div>
+        <label><small><b>Merit Rank *:</b></small></label>
+        <input id="editMeritRank" type="number" min="1" required>
+      </div>
+      <div>
+        <label><small><b>Percentage / Evaluation (%):</b></small></label>
+        <input id="editMeritScore" type="number" step="0.1" min="0" max="100" required>
+      </div>
+    </div>
+    <div style="margin-top:10px;">
+      <label><small><b>Selection Status *:</b></small></label>
+      <select id="editMeritSelectionStatus">
+        <option value="Selected">Selected (Granted Admission Approval)</option>
+        <option value="Waitlisted">Waitlisted (Next Round)</option>
+        <option value="Under Review">Under Review</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </div>
+    <div style="margin-top:10px;">
+      <label><small><b>Committee Remarks:</b></small></label>
+      <input id="editMeritRemarks" placeholder="e.g. Top rank candidate for Pre-Primary Wing. Approved.">
+    </div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn outline" onclick="closeModal('editMeritModal')">Cancel</button>
+      <button class="btn primary" onclick="submitMeritEdit()">Save Merit Evaluation</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. Finalize Official Enrollment Modal -->
+<div class="modal-overlay hidden" id="finalizeEnrollmentModal">
+  <div class="modal-card" style="max-width:560px;">
+    <h3 style="margin-top:0;">🎓 Finalize Student Enrollment</h3>
+    <p style="font-size:13px;color:#64748b;margin:0 0 14px;">Assign permanent Admission Number, Section, and Roll Number to activate the Student Dashboard & ID Card.</p>
+    <input type="hidden" id="enrollAppId">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <label><small><b>Candidate Name:</b></small></label>
+        <input id="enrollCandidate" readonly style="background:#f1f5f9;">
+      </div>
+      <div>
+        <label><small><b>Application No:</b></small></label>
+        <input id="enrollAppNo" readonly style="background:#f1f5f9;">
+      </div>
+    </div>
+    <div style="margin-top:10px;">
+      <label><small><b>Permanent Admission No (e.g. GIS-004) *:</b></small></label>
+      <input id="enrollAdmNo" required placeholder="GIS-004">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+      <div>
+        <label><small><b>Assigned Section *:</b></small></label>
+        <select id="enrollSection">
+          <option value="A">Section A</option>
+          <option value="B">Section B</option>
+          <option value="C">Section C</option>
+        </select>
+      </div>
+      <div>
+        <label><small><b>Assigned Roll Number *:</b></small></label>
+        <input id="enrollRollNo" required placeholder="e.g. 104">
+      </div>
+    </div>
+    <div style="margin-top:10px;">
+      <label><small><b>Class / Grade:</b></small></label>
+      <input id="enrollClass" placeholder="e.g. Nursery / Class Level">
+    </div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn outline" onclick="closeModal('finalizeEnrollmentModal')">Cancel</button>
+      <button class="btn primary" onclick="submitFinalizeEnrollment()">Confirm & Enroll Student 🎓</button>
     </div>
   </div>
 </div>

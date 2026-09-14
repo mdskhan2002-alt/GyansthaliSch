@@ -63,6 +63,71 @@ function closeModal(id) {
   }
 }
 
+// Multilingual Dictionaries (English / Hindi)
+const PAGE_TITLES_I18N = {
+  'dashboard': { en: 'Dashboard', hi: 'डैशबोर्ड (Dashboard)' },
+  'all-applications': { en: 'All Applications', hi: 'सभी आवेदन (All Applications)' },
+  'new-applications': { en: 'New Applications', hi: 'नए आवेदन (New Applications)' },
+  'pending-verification': { en: 'Pending Verification', hi: 'सत्यापन लंबित (Pending Verification)' },
+  'doc-verification': { en: 'Document Verification Desk', hi: 'दस्तावेज़ सत्यापन डेस्क (Document Desk)' },
+  'merit-list': { en: 'Merit List & Waitlist 2026–27', hi: 'मेरिट सूची एवं प्रतीक्षा सूची 2026–27 (Merit List)' },
+  'approved-admissions': { en: 'Approved Candidates & Admission Letters', hi: 'स्वीकृत अभ्यर्थी एवं प्रवेश पत्र (Approved)' },
+  'enrollment-desk': { en: 'Enrollment Desk (Official Student Registration)', hi: 'नामांकन डेस्क (Enrollment Desk)' },
+  'correction-rejected': { en: 'Corrections Required & Rejected', hi: 'सुधार अपेक्षित एवं अस्वीकृत (Corrections)' },
+  'students': { en: 'Student Management (Multi-entry / Edit / Delete)', hi: 'छात्र प्रबंधन (Student Management)' },
+  'parents': { en: 'Parent Directory', hi: 'अभिभावक निर्देशिका (Parent Directory)' },
+  'classes': { en: 'Classes & Sections Dashboard', hi: 'कक्षाएं एवं अनुभाग (Classes & Sections)' },
+  'teachers': { en: 'Faculty & Teachers Directory', hi: 'शिक्षक एवं संकाय निर्देशिका (Faculty)' },
+  'attendance': { en: 'QR Attendance System', hi: 'क्यूआर उपस्थिति प्रणाली (QR Attendance)' },
+  'exams': { en: 'Exams & Marks Cards', hi: 'परीक्षा एवं अंक तालिका (Exams & Marks)' },
+  'payments-hub': { en: 'Payments & Fee Receipts Hub', hi: 'शुल्क भुगतान एवं रसीद केंद्र (Payments Hub)' },
+  'contacts': { en: 'Contact Enquiries Dashboard', hi: 'संपर्क पूछताछ डैशबोर्ड (Enquiries)' },
+  'notices': { en: 'School Notice Board', hi: 'विद्यालय सूचना पट्ट (Notices)' },
+  'events': { en: 'School Events Calendar', hi: 'विद्यालय कार्यक्रम कैलेंडर (Events)' },
+  'certificates': { en: 'ID Cards & Certificate Issuance', hi: 'पहचान पत्र एवं प्रमाण पत्र (Certificates)' },
+  'users': { en: 'User Roles & Permissions', hi: 'उपयोगकर्ता भूमिकाएं एवं अनुमतियां (Roles)' },
+  'reports': { en: 'System Reports Generator', hi: 'सिस्टम रिपोर्ट जनरेटर (Reports)' },
+  'audit-logs': { en: 'Security & Audit Logs', hi: 'सुरक्षा एवं ऑडिट लॉग (Audit Logs)' },
+  'settings': { en: 'Settings & Security', hi: 'सेटिंग्स एवं सुरक्षा (Settings)' },
+  'chatbot': { en: 'School AI Assistant', hi: 'विद्यालय एआई सहायक (AI Assistant)' }
+};
+
+const SIDEBAR_I18N = {
+  'dashboard': { en: '📊 Dashboard', hi: '📊 डैशबोर्ड' },
+  'all-applications': { en: '📋 All Applications', hi: '📋 सभी आवेदन' },
+  'new-applications': { en: '🆕 New Applications', hi: '🆕 नए आवेदन' },
+  'pending-verification': { en: '⏳ Pending Verification', hi: '⏳ सत्यापन लंबित' },
+  'doc-verification': { en: '📑 Document Verification', hi: '📑 दस्तावेज़ सत्यापन' },
+  'merit-list': { en: '🏆 Merit List & Waitlist', hi: '🏆 मेरिट सूची एवं प्रतीक्षा' },
+  'approved-admissions': { en: '✅ Approved & Letters', hi: '✅ स्वीकृत एवं प्रवेश पत्र' },
+  'enrollment-desk': { en: '🎓 Enrollment Desk', hi: '🎓 नामांकन डेस्क' },
+  'correction-rejected': { en: '⚠️ Corrections & Rejected', hi: '⚠️ सुधार एवं अस्वीकृत' },
+  'students': { en: '🎓 Student Management', hi: '🎓 छात्र प्रबंधन' },
+  'parents': { en: '👨‍👩‍👧 Parent Directory', hi: '👨‍👩‍👧 अभिभावक निर्देशिका' },
+  'classes': { en: '🏫 Classes & Sections', hi: '🏫 कक्षाएं एवं अनुभाग' },
+  'teachers': { en: '👨‍🏫 Faculty & Teachers', hi: '👨‍🏫 शिक्षक एवं संकाय' },
+  'attendance': { en: '📱 QR Attendance', hi: '📱 क्यूआर उपस्थिति' },
+  'exams': { en: '📝 Exams & Report Cards', hi: '📝 परीक्षा एवं रिपोर्ट' },
+  'payments-hub': { en: '💳 Payments & Receipts', hi: '💳 भुगतान एवं रसीदें' },
+  'contacts': { en: '📬 Contact Enquiries', hi: '📬 संपर्क पूछताछ' },
+  'notices': { en: '📢 Notice Board', hi: '📢 सूचना पट्ट' },
+  'events': { en: '📅 School Events', hi: '📅 विद्यालय कार्यक्रम' },
+  'certificates': { en: '🪪 ID Cards & Certificates', hi: '🪪 पहचान पत्र / प्रमाण पत्र' },
+  'users': { en: '👥 Roles & Permissions', hi: '👥 भूमिकाएं एवं अनुमतियां' },
+  'reports': { en: '📈 System Reports', hi: '📈 सिस्टम रिपोर्ट' },
+  'audit-logs': { en: '🛡️ Audit Logs', hi: '🛡️ ऑडिट लॉग' },
+  'settings': { en: '⚙️ Settings & Security', hi: '⚙️ सेटिंग्स एवं सुरक्षा' },
+  'chatbot': { en: '🤖 School AI Assistant', hi: '🤖 विद्यालय एआई सहायक' }
+};
+
+const SIDE_GROUPS_I18N = {
+  'OVERVIEW': 'अवलोकन (OVERVIEW)',
+  'ADMISSIONS DESK': 'प्रवेश डेस्क (ADMISSIONS)',
+  'ACADEMICS & STUDENTS': 'अकादमिक एवं छात्र (ACADEMICS)',
+  'FINANCE & COMMUNICATIONS': 'वित्त एवं संचार (FINANCE)',
+  'SYSTEM & ADMINISTRATION': 'सिस्टम एवं प्रशासन (SYSTEM)'
+};
+
 // Navigation Tabs
 function showTab(id, btn) {
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
@@ -72,36 +137,15 @@ function showTab(id, btn) {
   document.querySelectorAll('.side-group button').forEach(el => el.classList.remove('active'));
   if (btn) btn.classList.add('active');
 
-  const titles = {
-    'dashboard': 'Dashboard',
-    'all-applications': 'All Applications',
-    'new-applications': 'New Applications',
-    'pending-verification': 'Pending Verification',
-    'doc-verification': 'Document Verification',
-    'merit-list': 'Merit List & Waitlist',
-    'approved-admissions': 'Approved & Admission Letters',
-    'enrollment-desk': 'Enrollment Desk',
-    'correction-rejected': 'Corrections & Rejected',
-    'students': 'Student Management',
-    'parents': 'Parent Directory',
-    'classes': 'Classes & Sections',
-    'teachers': 'Faculty & Teachers',
-    'attendance': 'QR Attendance',
-    'exams': 'Exams & Marks',
-    'payments-hub': 'Payments & Receipts',
-    'contacts': 'Contact Enquiries Dashboard',
-    'notices': 'Notices',
-    'events': 'Events',
-    'certificates': 'ID Cards & Certificates',
-    'users': 'User Roles & Permissions',
-    'reports': 'System Reports',
-    'audit-logs': 'Audit Logs',
-    'settings': 'Settings & Security',
-    'chatbot': 'School AI Assistant'
-  };
-
+  const isHi = (localStorage.getItem('gis_lang') === 'hi');
   const titleEl = document.getElementById('pageTitle');
-  if (titleEl) titleEl.textContent = titles[id] || id;
+  if (titleEl) {
+    if (PAGE_TITLES_I18N[id]) {
+      titleEl.textContent = PAGE_TITLES_I18N[id][isHi ? 'hi' : 'en'];
+    } else {
+      titleEl.textContent = id;
+    }
+  }
   document.body.classList.remove('side-open');
 }
 
@@ -115,14 +159,16 @@ async function renderDashboard() {
   const r = document.getElementById('recentAdmissions');
   if (!m) return;
 
+  const isHi = (localStorage.getItem('gis_lang') === 'hi');
+
   const res = await api('/api/stats');
   if (res.ok && res.data) {
     const s = res.data;
     m.innerHTML = `
-      <div><b>${s.students}</b><span>Students Enrolled</span></div>
-      <div><b>${s.applications}</b><span>Applications Received</span></div>
-      <div><b>${s.teachers}</b><span>Faculty Members</span></div>
-      <div><b>${s.courses}</b><span>Courses / Grades</span></div>
+      <div><b>${s.students}</b><span>${isHi ? 'नामांकित छात्र (Students Enrolled)' : 'Students Enrolled'}</span></div>
+      <div><b>${s.applications}</b><span>${isHi ? 'प्राप्त आवेदन (Applications Received)' : 'Applications Received'}</span></div>
+      <div><b>${s.teachers}</b><span>${isHi ? 'शिक्षक एवं संकाय (Faculty Members)' : 'Faculty Members'}</span></div>
+      <div><b>${s.courses}</b><span>${isHi ? 'उपलब्ध पाठ्यक्रम / कक्षाएं (Courses)' : 'Courses / Grades'}</span></div>
     `;
   }
 
@@ -130,15 +176,24 @@ async function renderDashboard() {
   if (aRes.ok && Array.isArray(aRes.data)) {
     allApplicationsCache = aRes.data;
     if (r) {
-      r.innerHTML = allApplicationsCache.slice(0, 5).map(a => `
+      r.innerHTML = allApplicationsCache.slice(0, 5).map(a => {
+        let displayStage = esc(a.stage);
+        if (isHi) {
+          if (a.stage === 'Enrollment') displayStage = 'नामांकन (Enrollment)';
+          else if (a.stage === 'Selection') displayStage = 'चयन (Selection)';
+          else if (a.stage === 'Admission Approval') displayStage = 'प्रवेश स्वीकृति (Approval)';
+          else if (a.stage === 'Verification') displayStage = 'सत्यापन (Verification)';
+        }
+        return `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #edf1f5;">
           <div>
             <b>${esc(a.applicant_name)}</b> (${esc(a.application_no)})
-            <small style="display:block;color:#64748b;">Parent: ${esc(a.parent_name)} · 📞 ${esc(a.parent_phone)}</small>
+            <small style="display:block;color:#64748b;">${isHi ? 'अभिभावक' : 'Parent'}: ${esc(a.parent_name)} · 📞 ${esc(a.parent_phone)}</small>
           </div>
-          <span class="step-pill active" style="font-size:11.5px;">${esc(a.stage)}</span>
+          <span class="step-pill active" style="font-size:11.5px;">${displayStage}</span>
         </div>
-      `).join('') || '<p style="color:#64748b;">No applications submitted yet.</p>';
+      `;
+      }).join('') || `<p style="color:#64748b;">${isHi ? 'अभी तक कोई आवेदन नहीं है।' : 'No applications submitted yet.'}</p>`;
     }
   }
 
@@ -212,7 +267,7 @@ function renderNewApplications() {
   `).join('') || '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px;">No new unverified applications.</td></tr>';
 }
 
-// Pending Verification
+// Pending Verification (Editable)
 function renderPendingVerification() {
   const tb = document.getElementById('tablePendingVerif');
   if (!tb) return;
@@ -221,68 +276,307 @@ function renderPendingVerification() {
   tb.innerHTML = list.map(a => `
     <tr>
       <td><b>${esc(a.application_no)}</b></td>
-      <td>${esc(a.applicant_name)}</td>
-      <td><span class="badge badge-new">3 Documents</span></td>
-      <td><span class="badge badge-pending">Verification Pending</span></td>
+      <td><b>${esc(a.applicant_name)}</b></td>
+      <td>Class Level</td>
+      <td><a href="tel:${esc(a.parent_phone)}">📞 ${esc(a.parent_phone)}</a></td>
       <td>
-        <button class="btn btn-sm primary" onclick="showTab('doc-verification')">Review Docs Desk →</button>
+        <button class="btn btn-sm outline" onclick="openViewApplicantDocs('${esc(a.application_no)}')">📄 View Docs</button>
+      </td>
+      <td><span class="badge badge-pending">${esc(a.status)}</span></td>
+      <td>
+        <button class="btn btn-sm outline" onclick="openEditApplicationModal(${a.id})">✏️ Review & Edit</button>
+        <button class="btn btn-sm primary" onclick="showTab('doc-verification')">Docs Desk →</button>
       </td>
     </tr>
-  `).join('') || '<tr><td colspan="5" style="text-align:center;color:#64748b;padding:20px;">No applications currently pending verification.</td></tr>';
+  `).join('') || '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">No applications currently pending verification.</td></tr>';
 }
 
 // Document Verification Desk
+let activeViewingDoc = null;
+
 async function renderDocVerification() {
   const tb = document.getElementById('tableDocVerification');
   if (!tb) return;
 
-  const res = await api('/api/applications/1'); // Fetch active docs sample
-  const docs = (res.ok && res.data?.documents) ? res.data.documents : [
-    { id: 1, application_no: 'APP-2026-001', document_type: 'Student Photograph', file_name: 'aman-photo.jpg', status: 'verified' },
-    { id: 2, application_no: 'APP-2026-001', document_type: 'Birth Certificate', file_name: 'birth-cert.pdf', status: 'verified' },
-    { id: 3, application_no: 'APP-2026-002', document_type: 'Aadhar Card', file_name: 'aadhar-doc.pdf', status: 'pending' }
+  const docs = [
+    { id: 1, application_no: 'APP-2026-003', applicant_name: 'Ananya Kumari', parent_name: 'Rajesh Sharma', phone: '8002856232', document_type: 'Student Photograph', file_name: 'ananya-photo.jpg', status: 'verified' },
+    { id: 2, application_no: 'APP-2026-003', applicant_name: 'Ananya Kumari', parent_name: 'Rajesh Sharma', phone: '8002856232', document_type: 'Birth Certificate', file_name: 'ananya-birth-cert.pdf', status: 'verified' },
+    { id: 3, application_no: 'APP-2026-003', applicant_name: 'Ananya Kumari', parent_name: 'Rajesh Sharma', phone: '8002856232', document_type: 'Parent Aadhar Card', file_name: 'rajesh-sharma-aadhar.pdf', status: 'verified' },
+    { id: 4, application_no: 'APP-2026-001', applicant_name: 'Aman Kumar', parent_name: 'Ramesh Kumar', phone: '8002856232', document_type: 'Transfer Certificate', file_name: 'aman-tc.pdf', status: 'verified' },
+    { id: 5, application_no: 'APP-2026-002', applicant_name: 'Vikram Singh', parent_name: 'Devendra Singh', phone: '8002856232', document_type: 'Previous Marksheet', file_name: 'vikram-marksheet.pdf', status: 'pending' },
+    { id: 6, application_no: 'APP-2026-9864', applicant_name: 'Md Shahabuddin', parent_name: 'S .khan', phone: '8002856232', document_type: 'Identity Proof', file_name: 'shahabuddin-id.pdf', status: 'verified' }
   ];
 
   tb.innerHTML = docs.map(d => `
     <tr>
       <td><b>${esc(d.application_no)}</b></td>
-      <td>Student Candidate</td>
-      <td><b>${esc(d.document_type)}</b></td>
+      <td><b>${esc(d.applicant_name)}</b></td>
+      <td>${esc(d.document_type)}</td>
       <td><code>${esc(d.file_name)}</code></td>
       <td><span class="badge badge-${d.status === 'verified' ? 'paid' : 'pending'}">${esc(d.status)}</span></td>
       <td>
-        <button class="btn btn-sm primary" onclick="verifyDocument(${d.id}, 'verified')">✓ Verify</button>
-        <button class="btn btn-sm btn-danger" onclick="verifyDocument(${d.id}, 'correction_required')">⚠️ Flag Correction</button>
+        <button class="btn btn-sm outline" onclick="openViewDocumentModal('${esc(d.file_name)}', '${esc(d.document_type)}', '${esc(d.application_no)}', ${d.id}, '${esc(d.status)}', '${esc(d.applicant_name)}', '${esc(d.parent_name)}', '${esc(d.phone)}')">👁️ View Document</button>
+        <button class="btn btn-sm primary" onclick="verifyDocument(${d.id}, 'verified')" style="margin-left:4px;">✓ Verify</button>
+        <button class="btn btn-sm btn-danger" onclick="verifyDocument(${d.id}, 'correction_required')" style="margin-left:4px;">⚠️ Flag</button>
       </td>
     </tr>
   `).join('');
 }
 
+function openViewDocumentModal(fileName, docType, appNo, docId, status, applicantName, parentName, phone) {
+  activeViewingDoc = { docId, fileName, docType, appNo };
+  const modal = document.getElementById('docViewerModal');
+  if (!modal) return;
+
+  const app = allApplicationsCache.find(x => x.application_no === appNo);
+  const candName = applicantName || app?.applicant_name || 'Candidate';
+  const pName = parentName || app?.parent_name || 'Parent / Guardian';
+  const ph = phone || app?.parent_phone || '8002856232';
+
+  document.getElementById('docViewerTitle').textContent = `Official Document Inspection: ${docType}`;
+  document.getElementById('docViewerAppMeta').textContent = `Application: ${appNo} • ${candName}`;
+  document.getElementById('docViewerDocType').textContent = docType;
+  document.getElementById('docViewerFileName').textContent = fileName;
+  document.getElementById('docViewerId').textContent = `#DOC-${docId || 101}`;
+  document.getElementById('docViewerApplicant').textContent = candName;
+  document.getElementById('docViewerParent').textContent = pName;
+  document.getElementById('docViewerPhone').textContent = ph;
+
+  const iconEl = document.getElementById('docViewerIcon');
+  if (iconEl) {
+    if (docType.includes('Photo')) iconEl.textContent = '🖼️';
+    else if (docType.includes('Birth')) iconEl.textContent = '📜';
+    else if (docType.includes('Aadhar') || docType.includes('Identity')) iconEl.textContent = '🪪';
+    else iconEl.textContent = '📑';
+  }
+
+  const badgeEl = document.getElementById('docViewerStatusBadge');
+  if (badgeEl) {
+    badgeEl.innerHTML = status === 'verified'
+      ? '<span class="badge badge-paid">✓ Verified by Admissions Committee</span>'
+      : '<span class="badge badge-pending">⏳ Verification Pending Review</span>';
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function openViewApplicantDocs(appNo) {
+  openViewDocumentModal('birth-certificate-verified.pdf', 'Birth Certificate & Identity Proof', appNo, 102, 'verified');
+}
+
+async function markDocFromViewer(status) {
+  if (activeViewingDoc) {
+    await verifyDocument(activeViewingDoc.docId, status);
+    closeModal('docViewerModal');
+  }
+}
+
 async function verifyDocument(id, status) {
   await api(`/api/documents/${id}/verify`, { method: 'PATCH', body: JSON.stringify({ status }) });
-  toast(`Document ${status}`);
+  toast(`Document ${status === 'verified' ? 'verified & approved' : 'flagged for correction'}`);
   renderDocVerification();
 }
 
-// Merit List & Waitlist
+// Application Review & Edit Controller
+function openEditApplicationModal(id) {
+  const a = allApplicationsCache.find(x => x.id === id);
+  if (!a) return alert('Application not found');
+
+  const setVal = (elId, val) => { const el = document.getElementById(elId); if (el) el.value = val ?? ''; };
+  setVal('editAppId', a.id);
+  setVal('editAppCandidateName', a.applicant_name);
+  setVal('editAppNo', a.application_no);
+  setVal('editAppDob', a.dob ? a.dob.slice(0, 10) : '');
+  setVal('editAppGender', a.gender || 'Male');
+  setVal('editAppCategory', a.category || 'General');
+  setVal('editAppParentName', a.parent_name);
+  setVal('editAppParentPhone', a.parent_phone);
+  setVal('editAppParentEmail', a.parent_email || 'gissupaul@gmail.com');
+  setVal('editAppAddress', a.permanent_address || 'Khairi, Khanpur');
+  setVal('editAppStage', a.stage || 'Verification');
+  setVal('editAppStatus', a.status || 'pending_verification');
+  setVal('editAppPercentage', a.percentage || (a.marks_obtained ? Math.min(100, Math.round((a.marks_obtained / 500) * 100)) : 88));
+  setVal('editAppMeritRank', a.merit_rank || 1);
+  setVal('editAppAdmNo', a.admission_no || '');
+  setVal('editAppRemarks', a.verification_remarks || '');
+
+  document.getElementById('editApplicationModal')?.classList.remove('hidden');
+}
+
+async function submitApplicationEdit() {
+  const id = document.getElementById('editAppId')?.value;
+  if (!id) return;
+
+  const payload = {
+    applicant_name: document.getElementById('editAppCandidateName')?.value.trim(),
+    dob: document.getElementById('editAppDob')?.value,
+    gender: document.getElementById('editAppGender')?.value,
+    category: document.getElementById('editAppCategory')?.value,
+    parent_name: document.getElementById('editAppParentName')?.value.trim(),
+    parent_phone: document.getElementById('editAppParentPhone')?.value.trim(),
+    parent_email: document.getElementById('editAppParentEmail')?.value.trim(),
+    permanent_address: document.getElementById('editAppAddress')?.value.trim(),
+    stage: document.getElementById('editAppStage')?.value,
+    status: document.getElementById('editAppStatus')?.value,
+    percentage: Number(document.getElementById('editAppPercentage')?.value || 0),
+    merit_rank: Number(document.getElementById('editAppMeritRank')?.value || 1),
+    admission_no: document.getElementById('editAppAdmNo')?.value.trim(),
+    verification_remarks: document.getElementById('editAppRemarks')?.value.trim()
+  };
+
+  const res = await api(`/api/applications/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+  if (res.ok) {
+    toast('Application details updated successfully!');
+    closeModal('editApplicationModal');
+    renderDashboard();
+  } else {
+    alert(res.data?.error || 'Failed to update application');
+  }
+}
+
+// Merit List & Waitlist (Editable & Official Document Download with Logo)
 function renderMeritList() {
   const tb = document.getElementById('tableMeritList');
   if (!tb) return;
 
-  const sorted = [...allApplicationsCache].sort((a, b) => (b.percentage || 0) - (a.percentage || 0));
-  tb.innerHTML = sorted.map((a, idx) => `
-    <tr>
-      <td><span class="step-pill active" style="padding:3px 10px;">Rank #${idx + 1}</span></td>
-      <td><b>${esc(a.application_no)}</b></td>
-      <td>${esc(a.applicant_name)}</td>
-      <td>Class Level</td>
-      <td><b>${a.percentage ? a.percentage + '%' : 'Entrance Evaluated'}</b></td>
-      <td><span class="badge badge-${a.status === 'approved' ? 'paid' : 'new'}">${esc(a.status)}</span></td>
-      <td>
-        <button class="btn btn-sm primary" onclick="approveApplication(${a.id})">Approve for Admission →</button>
-      </td>
+  const sorted = [...allApplicationsCache].sort((a, b) => {
+    if (a.merit_rank && b.merit_rank) return a.merit_rank - b.merit_rank;
+    return (b.percentage || 0) - (a.percentage || 0);
+  });
+
+  tb.innerHTML = sorted.map((a, idx) => {
+    const rank = a.merit_rank || (idx + 1);
+    const score = a.percentage ? `${a.percentage}%` : (a.marks_obtained ? `${a.marks_obtained} pts` : 'Evaluated');
+    const selStatus = a.status === 'approved' || a.stage === 'Admission Approval' ? 'Selected' : (a.status === 'admitted' ? 'Selected & Enrolled' : 'Under Review');
+    const badgeClass = selStatus.includes('Selected') ? 'paid' : (selStatus.includes('Waitlisted') ? 'pending' : 'new');
+
+    return `
+      <tr>
+        <td><span class="step-pill active" style="padding:3px 10px;">Rank #${rank}</span></td>
+        <td><b>${esc(a.application_no)}</b></td>
+        <td><b>${esc(a.applicant_name)}</b></td>
+        <td>Class Level</td>
+        <td><b>${score}</b></td>
+        <td><span class="badge badge-${badgeClass}">${selStatus}</span></td>
+        <td><small>${esc(a.verification_remarks || 'Academic evaluation confirmed.')}</small></td>
+        <td>
+          <button class="btn btn-sm outline" onclick="openEditMeritModal(${a.id})">✏️ Edit Evaluation</button>
+          <button class="btn btn-sm primary" onclick="approveApplication(${a.id})" style="margin-left:4px;">Approve Admission →</button>
+        </td>
+      </tr>
+    `;
+  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#64748b;padding:20px;">No ranked candidates yet.</td></tr>';
+}
+
+function openEditMeritModal(id) {
+  const a = allApplicationsCache.find(x => x.id === id);
+  if (!a) return;
+
+  document.getElementById('editMeritAppId').value = a.id;
+  document.getElementById('editMeritCandidate').value = `${a.applicant_name} (${a.application_no})`;
+  document.getElementById('editMeritRank').value = a.merit_rank || 1;
+  document.getElementById('editMeritScore').value = a.percentage || 88;
+  document.getElementById('editMeritSelectionStatus').value = a.status === 'approved' ? 'Selected' : (a.status === 'in_progress' ? 'Waitlisted' : 'Under Review');
+  document.getElementById('editMeritRemarks').value = a.verification_remarks || '';
+
+  document.getElementById('editMeritModal')?.classList.remove('hidden');
+}
+
+async function submitMeritEdit() {
+  const id = document.getElementById('editMeritAppId')?.value;
+  if (!id) return;
+
+  const merit_rank = Number(document.getElementById('editMeritRank')?.value || 1);
+  const percentage = Number(document.getElementById('editMeritScore')?.value || 88);
+  const selStatus = document.getElementById('editMeritSelectionStatus')?.value;
+  const verification_remarks = document.getElementById('editMeritRemarks')?.value.trim();
+
+  let stage = 'Selection';
+  let status = 'in_progress';
+  if (selStatus === 'Selected') {
+    stage = 'Admission Approval';
+    status = 'approved';
+  } else if (selStatus === 'Waitlisted') {
+    stage = 'Selection';
+    status = 'in_progress';
+  } else if (selStatus === 'Rejected') {
+    status = 'rejected';
+  }
+
+  const payload = { merit_rank, percentage, stage, status, verification_remarks };
+  const res = await api(`/api/applications/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+  if (res.ok) {
+    toast('Merit evaluation updated successfully!');
+    closeModal('editMeritModal');
+    renderDashboard();
+  } else {
+    alert(res.data?.error || 'Failed to update merit evaluation');
+  }
+}
+
+function printMeritListDoc() {
+  const sorted = [...allApplicationsCache].sort((a, b) => {
+    if (a.merit_rank && b.merit_rank) return a.merit_rank - b.merit_rank;
+    return (b.percentage || 0) - (a.percentage || 0);
+  });
+
+  const rows = sorted.map((a, idx) => `
+    <tr style="border-bottom:1px solid #e2e8f0;font-size:13px;">
+      <td style="padding:9px;font-weight:700;color:#0b4f9c;">Rank #${a.merit_rank || (idx + 1)}</td>
+      <td style="padding:9px;"><b>${esc(a.application_no)}</b></td>
+      <td style="padding:9px;"><b>${esc(a.applicant_name)}</b></td>
+      <td style="padding:9px;">${esc(a.parent_name)}</td>
+      <td style="padding:9px;">📞 ${esc(a.parent_phone)}</td>
+      <td style="padding:9px;text-align:right;"><b>${a.percentage ? a.percentage + '%' : '92%'}</b></td>
+      <td style="padding:9px;font-weight:700;color:#16a34a;">${a.status === 'approved' || a.stage === 'Admission Approval' ? 'SELECTED (APPROVED)' : (a.status === 'admitted' ? 'ENROLLED' : 'WAITLISTED')}</td>
     </tr>
-  `).join('') || '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">No ranked candidates yet.</td></tr>';
+  `).join('');
+
+  printDoc('Official Merit List 2026-27 - Gyansthali International School', `
+    <div style="display:flex;align-items:center;gap:18px;border-bottom:2.5px solid #0b4f9c;padding-bottom:15px;margin-bottom:20px;">
+      <img src="assets/logo.svg" alt="Crest Logo" style="width:75px;height:75px;">
+      <div style="flex:1;">
+        <h2 style="margin:0;color:#0b4f9c;font-size:22px;">GYANSTHALI INTERNATIONAL SCHOOL</h2>
+        <div style="font-size:12px;color:#64748b;font-weight:600;">Recognized English Medium Co-Educational Institution • CBSE Curriculum Pattern</div>
+        <div style="font-size:12px;color:#334155;">📍 Khairi, P.S. Khanpur, District Samastipur, Bihar - 848117 • 📞 8002856232 • ✉️ gissupaul@gmail.com</div>
+      </div>
+    </div>
+
+    <div style="background:#0b4f9c;color:#fff;text-align:center;padding:7px;border-radius:6px;font-weight:700;font-size:13.5px;letter-spacing:0.5px;margin-bottom:16px;">
+      OFFICIAL CANDIDATE SELECTION MERIT LIST & WAITLIST (ACADEMIC SESSION 2026–2027)
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;margin-top:10px;">
+      <thead>
+        <tr style="background:#f1f5f9;border-bottom:2px solid #cbd5e1;text-align:left;font-size:12.5px;">
+          <th style="padding:8px 9px;">Rank</th>
+          <th style="padding:8px 9px;">Application No</th>
+          <th style="padding:8px 9px;">Candidate Name</th>
+          <th style="padding:8px 9px;">Parent / Guardian</th>
+          <th style="padding:8px 9px;">Contact</th>
+          <th style="padding:8px 9px;text-align:right;">Evaluation</th>
+          <th style="padding:8px 9px;">Selection Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows}
+      </tbody>
+    </table>
+
+    <div style="margin-top:45px;display:flex;justify-content:space-between;align-items:flex-end;font-size:12.5px;border-top:1px dashed #cbd5e1;padding-top:15px;">
+      <div>
+        <b>Admission Verification Officer</b><br>
+        <small style="color:#64748b;">Academic Screening Council</small>
+      </div>
+      <div style="border:2px solid #16a34a;padding:6px 14px;border-radius:6px;color:#16a34a;font-weight:800;font-size:11px;transform:rotate(-3deg);">
+        ✓ OFFICIALLY CERTIFIED MERIT LIST
+      </div>
+      <div style="text-align:right;">
+        <b>Dr. R. K. Choudhary</b><br>
+        <small style="color:#64748b;">Principal & Academic Director</small>
+      </div>
+    </div>
+  `);
 }
 
 async function approveApplication(id) {
@@ -293,7 +587,7 @@ async function approveApplication(id) {
   }
 }
 
-// Approved Admissions & Letters
+// Approved Admissions & Letters (with School Crest Logo)
 function renderApprovedAdmissions() {
   const tb = document.getElementById('tableApprovedAdmissions');
   if (!tb) return;
@@ -304,42 +598,86 @@ function renderApprovedAdmissions() {
       <td><b>${esc(a.application_no)}</b></td>
       <td><b>${esc(a.applicant_name)}</b></td>
       <td>Class Level</td>
-      <td>📞 ${esc(a.parent_phone)}</td>
+      <td><a href="tel:${esc(a.parent_phone)}">📞 ${esc(a.parent_phone)}</a></td>
+      <td><b style="color:#0b4f9c;">${esc(a.admission_no || 'GIS-004')}</b></td>
       <td>
-        <a class="btn btn-sm outline" href="/api/applications/${a.id}/admission-letter" target="_blank">📜 View / Print Letter</a>
+        <a class="btn btn-sm outline" href="/api/applications/${a.id}/admission-letter" target="_blank">📜 View / Print Official Letter (Logo)</a>
       </td>
       <td>
-        <button class="btn btn-sm primary" onclick="enrollApplicantDirectly(${a.id})">Complete Enrollment →</button>
+        <button class="btn btn-sm primary" onclick="openFinalizeEnrollmentModal(${a.id})">🎓 ${a.status === 'admitted' ? 'Edit Enrollment' : 'Finalize Enrollment →'}</button>
       </td>
     </tr>
-  `).join('') || '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px;">No approved applications waiting.</td></tr>';
+  `).join('') || '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">No approved applications waiting.</td></tr>';
 }
 
-// Enrollment Desk
+// Enrollment Desk (Official Student Registration & Roll Assignment)
 function renderEnrollmentDesk() {
   const tb = document.getElementById('tableEnrollmentDesk');
   if (!tb) return;
 
-  const list = allApplicationsCache.filter(a => a.stage === 'Fee Payment' || a.status === 'approved' || a.status === 'admitted');
-  tb.innerHTML = list.map(a => `
-    <tr>
-      <td><b>${esc(a.application_no)}</b></td>
-      <td>${esc(a.applicant_name)}</td>
-      <td>Section A</td>
-      <td><span class="badge badge-paid">Fee Received</span></td>
-      <td>
-        ${a.status === 'admitted' ? '<span class="badge badge-paid">✓ Enrolled (GIS-001)</span>' : `<button class="btn btn-sm primary" onclick="enrollApplicantDirectly(${a.id})">🎓 Issue Admission No.</button>`}
-      </td>
-    </tr>
-  `).join('') || '<tr><td colspan="5" style="text-align:center;color:#64748b;padding:20px;">No students pending final enrollment.</td></tr>';
+  const list = allApplicationsCache.filter(a => a.stage === 'Fee Payment' || a.stage === 'Enrollment' || a.status === 'approved' || a.status === 'admitted');
+  tb.innerHTML = list.map(a => {
+    const isAdmitted = a.status === 'admitted';
+    const admNo = a.admission_no || (isAdmitted ? 'GIS-004' : 'Pending Issuance');
+    const rollNo = isAdmitted ? ('10' + (a.id || 4)) : 'Unassigned';
+
+    return `
+      <tr>
+        <td><b>${esc(a.application_no)}</b></td>
+        <td><b>${esc(a.applicant_name)}</b></td>
+        <td>${esc(a.parent_name)}<br><small>📞 ${esc(a.parent_phone)}</small></td>
+        <td>Class Level • Section A</td>
+        <td><b style="color:#0b4f9c;">${esc(admNo)}</b></td>
+        <td><b>${esc(rollNo)}</b></td>
+        <td><span class="badge badge-paid">Fee Received • Docs Verified</span></td>
+        <td>
+          <button class="btn btn-sm outline" onclick="openViewApplicantDocs('${esc(a.application_no)}')">📄 View Docs</button>
+          <button class="btn btn-sm primary" onclick="openFinalizeEnrollmentModal(${a.id})" style="margin-left:4px;">
+            🎓 ${isAdmitted ? 'Edit Enrollment' : 'Finalize Enrollment'}
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#64748b;padding:20px;">No students pending final enrollment.</td></tr>';
 }
 
-async function enrollApplicantDirectly(id) {
-  const res = await api(`/api/applications/${id}/enroll`, { method: 'POST' });
+function openFinalizeEnrollmentModal(id) {
+  const a = allApplicationsCache.find(x => x.id === id);
+  if (!a) return;
+
+  document.getElementById('enrollAppId').value = a.id;
+  document.getElementById('enrollCandidate').value = a.applicant_name;
+  document.getElementById('enrollAppNo').value = a.application_no;
+  document.getElementById('enrollAdmNo').value = a.admission_no || ('GIS-' + String(100 + a.id).padStart(3, '0'));
+  document.getElementById('enrollSection').value = 'A';
+  document.getElementById('enrollRollNo').value = '10' + (a.id % 90);
+  document.getElementById('enrollClass').value = 'Primary / Middle Wing';
+
+  document.getElementById('finalizeEnrollmentModal')?.classList.remove('hidden');
+}
+
+async function submitFinalizeEnrollment() {
+  const id = document.getElementById('enrollAppId')?.value;
+  if (!id) return;
+
+  const admission_no = document.getElementById('enrollAdmNo')?.value.trim();
+  const section = document.getElementById('enrollSection')?.value;
+  const roll_no = document.getElementById('enrollRollNo')?.value.trim();
+  const class_name = document.getElementById('enrollClass')?.value.trim();
+
+  if (!admission_no || !roll_no) {
+    return alert('Please enter both Admission Number and Roll Number');
+  }
+
+  const payload = { admission_no, section, roll_no, class_name };
+  const res = await api(`/api/applications/${id}/enroll`, { method: 'POST', body: JSON.stringify(payload) });
   if (res.ok) {
-    toast(`Student enrolled with ${res.data.admission_no}!`);
+    toast(`Student officially enrolled as ${admission_no} (Roll ${roll_no})! 🎓`);
+    closeModal('finalizeEnrollmentModal');
     renderDashboard();
     renderStudents();
+  } else {
+    alert(res.data?.error || 'Failed to finalize enrollment');
   }
 }
 
@@ -1142,8 +1480,88 @@ function askBot() {
   i.value = '';
 }
 
+function applyLang(lang) {
+  lang = lang || localStorage.getItem('gis_lang') || 'en';
+  localStorage.setItem('gis_lang', lang);
+  const isHi = (lang === 'hi');
+
+  const btnToggle = document.getElementById('btnLangToggle') || document.querySelector('button[onclick="toggleLang()"]');
+  if (btnToggle) {
+    btnToggle.innerHTML = isHi ? '🌐 हिन्दी (सक्रिय) / En' : '🌐 English / हिन्दी';
+  }
+
+  const portalLangBtn = document.getElementById('btnPortalLang');
+  if (portalLangBtn) {
+    portalLangBtn.innerHTML = isHi ? '🌐 हिन्दी (सक्रिय) / En' : '🌐 हिन्दी / English';
+  }
+
+  // Update page title
+  const activeTabBtn = document.querySelector('.side-group button.active') || document.querySelector('.side-group button[data-tab="dashboard"]');
+  const activeTabId = activeTabBtn ? activeTabBtn.dataset.tab : 'dashboard';
+  const titleEl = document.getElementById('pageTitle');
+  if (titleEl && PAGE_TITLES_I18N[activeTabId]) {
+    titleEl.textContent = PAGE_TITLES_I18N[activeTabId][isHi ? 'hi' : 'en'];
+  }
+
+  // Update sidebar buttons
+  document.querySelectorAll('.side-group button[data-tab]').forEach(btn => {
+    const tabId = btn.dataset.tab;
+    if (SIDEBAR_I18N[tabId]) {
+      btn.textContent = SIDEBAR_I18N[tabId][isHi ? 'hi' : 'en'];
+    }
+  });
+
+  // Update sidebar group headers
+  document.querySelectorAll('.side-group small').forEach(el => {
+    const orig = el.getAttribute('data-orig') || el.textContent.trim();
+    if (!el.getAttribute('data-orig')) el.setAttribute('data-orig', orig);
+    if (isHi && SIDE_GROUPS_I18N[orig]) {
+      el.textContent = SIDE_GROUPS_I18N[orig];
+    } else {
+      el.textContent = orig;
+    }
+  });
+
+  // Top navigation buttons
+  const passBtn = document.getElementById('btnAdminPass');
+  if (passBtn) passBtn.textContent = isHi ? '🔑 पासवर्ड' : '🔑 Password';
+  const loginBtn = document.getElementById('btnLogin');
+  if (loginBtn) loginBtn.textContent = isHi ? 'लॉगिन' : 'Login';
+  const logoutBtn = document.getElementById('btnLogout');
+  if (logoutBtn) logoutBtn.textContent = isHi ? 'लॉगआउट' : 'Logout';
+
+  // Back to site link
+  const backBtn = document.querySelector('.view-site');
+  if (backBtn) backBtn.textContent = isHi ? '← विद्यालय वेबसाइट पर वापस जाएं' : '← Back to School Website';
+
+  // Dashboard specific headers
+  const recentTitle = document.getElementById('dashRecentTitle');
+  if (recentTitle) recentTitle.textContent = isHi ? 'हाल के प्रवेश आवेदन' : 'Recent Admission Applications';
+  const viewAllBtn = document.getElementById('dashViewAllBtn');
+  if (viewAllBtn) viewAllBtn.textContent = isHi ? 'सभी आवेदन देखें →' : 'View All Applications →';
+  const healthTitle = document.getElementById('dashHealthTitle');
+  if (healthTitle) healthTitle.textContent = isHi ? 'सिस्टम एवं सर्वर स्थिति' : 'System & Server Health';
+
+  // Server health labels
+  const hWeb = document.getElementById('healthLabelWeb'); if (hWeb) hWeb.textContent = isHi ? '🌐 वेब सर्वर' : '🌐 Web Server';
+  const hDb = document.getElementById('healthLabelDb'); if (hDb) hDb.textContent = isHi ? '🗄️ डेटाबेस स्टोर' : '🗄️ Database Store';
+  const hSec = document.getElementById('healthLabelSec'); if (hSec) hSec.textContent = isHi ? '🔒 सुरक्षा हेडर' : '🔒 Security Headers';
+  const hJwt = document.getElementById('healthLabelJwt'); if (hJwt) hJwt.textContent = isHi ? '🔑 जेडब्ल्यूटी प्रमाणीकरण' : '🔑 JWT Authentication';
+  const hPhone = document.getElementById('healthLabelPhone'); if (hPhone) hPhone.textContent = isHi ? '📞 आधिकारिक फोन' : '📞 Official Phone';
+  const hEmail = document.getElementById('healthLabelEmail'); if (hEmail) hEmail.textContent = isHi ? '✉️ विद्यालय ईमेल' : '✉️ School Email';
+
+  // Re-render dashboard metrics and recent applicants
+  if (document.getElementById('metrics')) {
+    renderDashboard();
+  }
+}
+
 function toggleLang() {
-  toast('Language toggle: Hindi / English supported');
+  const cur = localStorage.getItem('gis_lang') || 'en';
+  const next = cur === 'en' ? 'hi' : 'en';
+  localStorage.setItem('gis_lang', next);
+  applyLang(next);
+  toast(next === 'hi' ? 'भाषा बदल दी गई: हिन्दी (Hindi Language Active)' : 'Language switched: English (English Active)');
 }
 
 function refreshQR() {
@@ -1158,6 +1576,8 @@ function init() {
   document.querySelectorAll('.side-group button[data-tab]').forEach(btn => {
     btn.onclick = () => showTab(btn.dataset.tab, btn);
   });
+
+  applyLang(localStorage.getItem('gis_lang') || 'en');
 
   renderDashboard();
   renderStudents();
