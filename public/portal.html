@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Student & Parent Portal | Gyansthali International School</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body class="portal">
+
+<!-- Header -->
+<header class="site-header">
+  <a class="logo" href="index.html">
+    <img src="assets/logo.svg" alt="Gyansthali Crest" class="logo-icon">
+    <div class="logo-text">
+      <b>GYANSTHALI</b>
+      <small>PARENT & STUDENT PORTAL</small>
+    </div>
+  </a>
+  <div style="display:flex;gap:12px;">
+    <a class="btn outline" href="index.html">← Public Website</a>
+    <a class="btn primary" href="admin.html">Admin Portal</a>
+  </div>
+</header>
+
+<main class="portal-main">
+  <!-- Login Box -->
+  <div class="login-card" id="portalLoginCard">
+    <div style="text-align:center;">
+      <img src="assets/logo.svg" alt="Logo" style="width:60px;height:60px;margin-bottom:10px;">
+      <h2 style="margin:0 0 6px;color:#0b4f9c;">Parent / Student Portal</h2>
+      <p style="font-size:14px;color:#64748b;margin:0;">Access student attendance, fee receipts, and term results.</p>
+    </div>
+
+    <div>
+      <label><small><b>Admission No. or Registered Mobile:</b></small></label>
+      <input id="portalStudentQuery" placeholder="e.g. GIS-001 or 8002856232" value="GIS-001" style="margin-top:5px;">
+    </div>
+
+    <div>
+      <label><small><b>Security PIN:</b></small></label>
+      <input id="portalPin" type="password" placeholder="Default PIN: 1234" value="1234" style="margin-top:5px;">
+    </div>
+
+    <button class="btn primary" onclick="portalLogin()">Log In to Portal</button>
+
+    <div style="text-align:center;margin-top:10px;">
+      <small style="color:#64748b;">Demo Login: Admission No <b>GIS-001</b> and PIN <b>1234</b></small>
+      <div style="margin-top:6px;font-size:12px;color:#64748b;">
+        Need help? Call school office at <b>8002856232</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authenticated Portal View -->
+  <div id="portalApp" class="portal-app hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;padding:20px 24px;border-radius:14px;border:1px solid #e2e8f0;margin-bottom:24px;">
+      <div>
+        <h2 style="margin:0;color:#0b4f9c;" id="portalStudentName">Aman Kumar</h2>
+        <p style="margin:4px 0 0;color:#64748b;" id="portalStudentMeta">Class VIII-A &nbsp;•&nbsp; Admission No: GIS-001 &nbsp;•&nbsp; Parent: Ramesh Kumar</p>
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="portalLogout()">Sign Out</button>
+    </div>
+
+    <!-- Student Metric Cards -->
+    <div class="metric-grid">
+      <div><b id="portalAttendanceVal">94%</b><span>Attendance (Current Term)</span></div>
+      <div><b id="portalFeeVal">₹5,000</b><span>Fee Due</span></div>
+      <div><b id="portalGradeVal">A (88%)</b><span>Term Aggregate</span></div>
+      <div><b>Active</b><span>Academic Status</span></div>
+    </div>
+
+    <!-- Features -->
+    <div class="cards">
+      <article>
+        <div class="icon">📅</div>
+        <h3>Attendance Record</h3>
+        <p>184 Days Present · 12 Days Absent / Leave</p>
+        <div id="portalAttendanceSnippet" style="margin-top:10px;font-size:13px;color:#15803d;font-weight:600;">✓ Marked Present Today</div>
+      </article>
+
+      <article>
+        <div class="icon">💳</div>
+        <h3>Fee Receipts & Payment</h3>
+        <p>Annual / Term fee invoices and digital receipts.</p>
+        <button class="btn primary" onclick="payDemo()" style="margin-top:10px;">Pay Online (₹5,000)</button>
+      </article>
+
+      <article>
+        <div class="icon">📊</div>
+        <h3>Term Results & Report Card</h3>
+        <p>Official progress report certified by faculty.</p>
+        <button class="btn outline" onclick="printReport()" style="margin-top:10px;">Download PDF Report Card</button>
+      </article>
+
+      <article>
+        <div class="icon">📢</div>
+        <h3>School Notices & Circulars</h3>
+        <div id="portalNoticeSnippet">
+          <p style="margin:4px 0;font-size:13px;color:#334155;"><b>Admissions Open 2026-27</b>: Sibling discount available.</p>
+          <p style="margin:4px 0;font-size:13px;color:#334155;"><b>Upcoming Exam</b>: Term final schedule released.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<script>
+  async function portalLogin() {
+    const query = document.getElementById('portalStudentQuery')?.value.trim();
+    const pin = document.getElementById('portalPin')?.value.trim();
+
+    if (!query) {
+      alert('Please enter your Admission Number or registered Mobile Number.');
+      return;
+    }
+
+    if (pin && pin !== '1234') {
+      alert('Invalid PIN. For demo access, please use PIN 1234.');
+      return;
+    }
+
+    // Lookup from server API
+    const res = await api('/api/portal/student/' + encodeURIComponent(query));
+    if (res.ok && res.data?.student) {
+      const { student, attendance, fees } = res.data;
+      document.getElementById('portalStudentName').textContent = student.name;
+      document.getElementById('portalStudentMeta').textContent = 
+        `${student.class_name || 'Class VIII'} ${student.section ? '-' + student.section : ''} • Admission No: ${student.admission_no} • Parent: ${student.parent_name || 'Guardian'}`;
+      
+      if (fees && fees.length > 0) {
+        document.getElementById('portalFeeVal').textContent = '₹' + Number(fees[0].amount).toLocaleString('en-IN');
+      }
+    } else {
+      document.getElementById('portalStudentName').textContent = query === 'GIS-001' ? 'Aman Kumar' : 'Student: ' + query;
+    }
+
+    document.getElementById('portalLoginCard').classList.add('hidden');
+    document.getElementById('portalApp').classList.remove('hidden');
+    toast('Welcome to the Student / Parent Portal');
+  }
+
+  function portalLogout() {
+    document.getElementById('portalApp').classList.add('hidden');
+    document.getElementById('portalLoginCard').classList.remove('hidden');
+    toast('Logged out');
+  }
+</script>
+</body>
+</html>

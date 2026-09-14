@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Portal | Gyansthali International School</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body class="dashboard">
+
+<!-- Sidebar Navigation -->
+<aside class="sidebar">
+  <a class="side-brand" href="index.html">
+    <img src="assets/logo.svg" alt="School Emblem">
+    <div>
+      <b>GYANSTHALI</b><br>
+      <small>ADMIN MANAGEMENT</small>
+    </div>
+  </a>
+
+  <div class="side-group">
+    <small>OVERVIEW</small>
+    <button data-tab="dashboard" class="active">📊 Dashboard</button>
+  </div>
+
+  <div class="side-group">
+    <small>STUDENTS & ACADEMIC</small>
+    <button data-tab="students">🎓 Student Management</button>
+    <button data-tab="parents">👨‍👩‍👧 Parent Management</button>
+    <button data-tab="classes">🏫 Classes & Sections</button>
+    <button data-tab="teachers">👨‍🏫 Faculty & Teachers</button>
+    <button data-tab="subjects">📖 Subjects & Syllabus</button>
+    <button data-tab="timetable">🗓️ School Timetable</button>
+    <button data-tab="attendance">📱 QR & Attendance</button>
+    <button data-tab="exams">📝 Exams & Marks</button>
+    <button data-tab="results">📜 Report Cards (PDF)</button>
+  </div>
+
+  <div class="side-group">
+    <small>ADMISSIONS & WORKFLOW</small>
+    <button data-tab="workflow">🚀 Application Workflow</button>
+    <button data-tab="admissions">📋 Admission Enquiries</button>
+    <button data-tab="contacts">📬 Contact Enquiries</button>
+  </div>
+
+  <div class="side-group">
+    <small>FINANCE & NOTICES</small>
+    <button data-tab="fees">💳 Fees & Online Payments</button>
+    <button data-tab="notices">📢 Notice Board</button>
+    <button data-tab="events">📅 School Events</button>
+    <button data-tab="gallery">🖼️ Gallery Upload</button>
+    <button data-tab="certificates">🪪 ID Cards & Certificates</button>
+  </div>
+
+  <div class="side-group">
+    <small>SYSTEM & ADMINISTRATION</small>
+    <button data-tab="users">👥 Roles & Permissions</button>
+    <button data-tab="reports">📈 Generate Reports</button>
+    <button data-tab="settings">⚙️ Settings & Backup</button>
+    <button data-tab="chatbot">🤖 School AI Assistant</button>
+  </div>
+
+  <a class="view-site" href="index.html">← Back to Public Website</a>
+</aside>
+
+<!-- Main Admin Panel Content -->
+<main class="dash-main">
+  <!-- Top Navigation Header -->
+  <div class="dash-top">
+    <div class="dash-top-left">
+      <button class="menu-btn mobile-side" onclick="document.body.classList.toggle('side-open')" aria-label="Toggle sidebar">☰</button>
+      <h2 id="pageTitle">Dashboard</h2>
+    </div>
+    <div class="dash-top-right">
+      <button class="btn btn-sm outline" onclick="toggleLang()">हिन्दी / English</button>
+      <div class="admin-user" id="userBadge">
+        <span>👤</span>
+        <span id="adminEmail">gissupaul@gmail.com</span>
+      </div>
+      <button class="btn btn-sm primary" id="loginBtn" onclick="openLoginModal()">Login</button>
+      <button class="btn btn-sm btn-danger" id="logoutBtn" onclick="logoutAdmin()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Tab 1: Dashboard Overview -->
+  <div id="dashboard" class="tab active">
+    <div class="metric-grid" id="metrics"></div>
+
+    <div class="dash-grid">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h3 style="margin:0;">Recent Admission Applications</h3>
+          <button class="btn btn-sm outline" onclick="showTab('workflow')">View Workflow Pipeline →</button>
+        </div>
+        <div id="recentAdmissions"></div>
+      </div>
+      <div class="panel">
+        <h3>System & Server Health</h3>
+        <div class="health">
+          <p><span>🌐 Web Server</span><b>🟢 Online (:3000)</b></p>
+          <p><span>🗄️ Database Store</span><b>🟢 Persistent Ready</b></p>
+          <p><span>🔒 Security Headers</span><b>🟢 Helmet Active</b></p>
+          <p><span>🔑 JWT Authentication</span><b>🟢 Enabled</b></p>
+          <p><span>📞 Enquiry Phone</span><b>🟢 8002856232</b></p>
+          <p><span>✉️ School Email</span><b>🟢 gissupaul@gmail.com</b></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Student Management (Multiple Entry, Edit, Delete) -->
+  <div id="students" class="tab">
+    <div class="toolbar">
+      <button class="btn primary" onclick="openStudentModal()">+ Add Single Student</button>
+      <button class="btn outline" onclick="openBulkStudentModal()">📑 + Bulk / Multiple Entry</button>
+      <button class="btn btn-danger" id="btnDeleteSelected" onclick="deleteSelectedStudents()" style="display:none;">🗑️ Delete Selected</button>
+      <input id="studentSearch" placeholder="Search student name, roll, class, or phone..." oninput="renderStudents()">
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th width="40"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAllStudents(this.checked)"></th>
+            <th>Admission No.</th>
+            <th>Full Name</th>
+            <th>Class & Sec</th>
+            <th>Roll No.</th>
+            <th>Parent / Guardian</th>
+            <th>Parent Phone</th>
+            <th>Address</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="studentTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Parent Management -->
+  <div id="parents" class="tab">
+    <div class="toolbar">
+      <h3>Parent Accounts & Student Links</h3>
+      <button class="btn primary" onclick="toast('Parent notification dispatch queued via SMS/WhatsApp')">📢 Send Broadcast Notice</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Parent / Guardian Name</th>
+            <th>Student Linked</th>
+            <th>Class</th>
+            <th>Mobile Number</th>
+            <th>Portal PIN</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="parentTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 4: Classes & Sections Dashboard -->
+  <div id="classes" class="tab">
+    <div class="toolbar">
+      <button class="btn primary" onclick="openAddClassModal()">+ Add Class & Section</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Class Level</th>
+            <th>Sections</th>
+            <th>Enrolled Students</th>
+            <th>Class Teacher In-Charge</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="classTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 5: Teachers & Faculty -->
+  <div id="teachers" class="tab">
+    <div class="toolbar">
+      <button class="btn primary" onclick="addTeacher()">+ Add Faculty Member</button>
+    </div>
+    <div id="teacherCards" class="teacher-grid"></div>
+  </div>
+
+  <!-- Tab 6: Subjects -->
+  <div id="subjects" class="tab">
+    <div class="panel">
+      <h3>Core Curriculum & Subject Allocation</h3>
+      <p>English · Hindi · Mathematics · Science (Physics, Chemistry, Biology) · Social Studies (History, Geography, Civics) · Sanskrit · Computer Science · Physical & Health Education · Arts & Craft.</p>
+    </div>
+  </div>
+
+  <!-- Tab 7: Timetable -->
+  <div id="timetable" class="tab">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Period</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1 (08:30 - 09:15)</td><td>English</td><td>Mathematics</td><td>Science</td><td>Hindi</td><td>Computer</td><td>English</td></tr>
+          <tr><td>2 (09:15 - 10:00)</td><td>Mathematics</td><td>Science</td><td>English</td><td>Social Sci</td><td>Sports</td><td>Mathematics</td></tr>
+          <tr><td>3 (10:00 - 10:45)</td><td>Science</td><td>Hindi</td><td>Mathematics</td><td>English</td><td>Library</td><td>Science</td></tr>
+          <tr><td>Break (10:45 - 11:15)</td><td colspan="6" style="text-align:center;background:#fef3c7;font-weight:700;">LUNCH BREAK</td></tr>
+          <tr><td>4 (11:15 - 12:00)</td><td>Social Studies</td><td>Computer</td><td>Hindi</td><td>Mathematics</td><td>Science</td><td>Art & Craft</td></tr>
+          <tr><td>5 (12:00 - 12:45)</td><td>Computer Lab</td><td>English</td><td>Social Studies</td><td>Science</td><td>Hindi</td><td>Quiz / Debate</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 8: QR Attendance -->
+  <div id="attendance" class="tab">
+    <div class="dash-grid">
+      <div class="panel" style="text-align:center;">
+        <h3>QR Check-in Station</h3>
+        <img id="qr" class="qr" alt="QR Attendance Code">
+        <p style="font-size:14px;color:#64748b;">Scan to record digital attendance check-in.</p>
+        <button class="btn primary" onclick="refreshQR()">Refresh QR Code</button>
+      </div>
+      <div class="panel">
+        <h3>Today's Attendance Stream</h3>
+        <div id="attendanceList"></div>
+        <div style="margin-top:15px;">
+          <button class="btn outline" onclick="markPresent()">+ Mark Demo Student Present</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 9: Exams & Marks -->
+  <div id="exams" class="tab">
+    <div class="panel">
+      <h3>Examination Marks Entry</h3>
+      <div style="margin-bottom:15px;">
+        <label><b>Select Examination:</b></label>
+        <select style="max-width:300px;margin-top:6px;">
+          <option>Annual Examination 2026</option>
+          <option>Half Yearly Examination 2025</option>
+          <option>Periodic Test II (PT-2)</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Student</th><th>Math (100)</th><th>Science (100)</th><th>English (100)</th><th>Hindi (100)</th><th>Save</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Aman Kumar (GIS-001)</b></td>
+              <td><input style="width:70px;" value="88"></td>
+              <td><input style="width:70px;" value="90"></td>
+              <td><input style="width:70px;" value="85"></td>
+              <td><input style="width:70px;" value="86"></td>
+              <td><button class="btn btn-sm primary" onclick="toast('Marks updated')">Save</button></td>
+            </tr>
+            <tr>
+              <td><b>Priya Kumari (GIS-002)</b></td>
+              <td><input style="width:70px;" value="94"></td>
+              <td><input style="width:70px;" value="92"></td>
+              <td><input style="width:70px;" value="95"></td>
+              <td><input style="width:70px;" value="91"></td>
+              <td><button class="btn btn-sm primary" onclick="toast('Marks updated')">Save</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 10: Results & PDF Report Card -->
+  <div id="results" class="tab">
+    <div class="panel">
+      <h3>Generate Printable PDF Report Card</h3>
+      <p>Select a student to generate and print their official annual report card.</p>
+      <div style="display:flex;gap:12px;max-width:500px;margin-bottom:20px;">
+        <select id="reportStudent">
+          <option value="Aman Kumar — Class VIII-A (GIS-001)">Aman Kumar — Class VIII-A (GIS-001)</option>
+          <option value="Priya Kumari — Class VIII-A (GIS-002)">Priya Kumari — Class VIII-A (GIS-002)</option>
+          <option value="Rahul Raj — Class V-B (GIS-003)">Rahul Raj — Class V-B (GIS-003)</option>
+        </select>
+        <button class="btn primary" onclick="printReport()">Generate PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 11: Application Workflow -->
+  <!-- Workflow: Enquiry -> Form -> Documents -> Verification -> Interview -> Approved -> Admission No. -->
+  <div id="workflow" class="tab">
+    <div class="panel">
+      <h3>Online Application Lifecycle Workflow</h3>
+      <div class="workflow-stepper">
+        <span class="step-pill">1. Enquiry</span> →
+        <span class="step-pill">2. Form</span> →
+        <span class="step-pill">3. Documents</span> →
+        <span class="step-pill">4. Verification</span> →
+        <span class="step-pill">5. Interview</span> →
+        <span class="step-pill">6. Approved</span> →
+        <span class="step-pill active">7. Admission No.</span>
+      </div>
+      <p style="color:#64748b;font-size:14px;margin-top:12px;">Track candidates through each stage of the admission funnel.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Applicant</th>
+            <th>Parent</th>
+            <th>Grade</th>
+            <th>Contact</th>
+            <th>Current Stage</th>
+            <th>Advance Stage</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="workflowTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 12: Admission Enquiries -->
+  <div id="admissions" class="tab">
+    <div class="toolbar">
+      <h3>Website Admission Submissions</h3>
+    </div>
+    <div id="admissionTable"></div>
+  </div>
+
+  <!-- Tab 13: Contact Enquiries Dashboard (Fixed) -->
+  <div id="contacts" class="tab">
+    <div class="toolbar">
+      <h3>Website Contact Queries Dashboard</h3>
+      <span style="color:#64748b;font-size:13px;">Direct enquiries sent from the public website contact form</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Sender Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Message</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="contactTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 14: Fees -->
+  <div id="fees" class="tab">
+    <div class="panel">
+      <h3>Student Fee Collection & Receipts</h3>
+      <div class="fee-box">
+        <div>
+          <b>Aman Kumar (GIS-001)</b>
+          <p style="margin:4px 0 0;color:#64748b;">Annual Fee Due: ₹5,000 · Due Date: 10 April 2026</p>
+        </div>
+        <button class="btn primary" onclick="payDemo()">Pay ₹5,000 (Demo Mode)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 15: Notices -->
+  <div id="notices" class="tab">
+    <div class="panel">
+      <h3>Publish School Notice</h3>
+      <textarea id="noticeInput" placeholder="Write notice headline or circular for public website & parent portal..." style="margin-bottom:12px;"></textarea>
+      <button class="btn primary" onclick="publishNotice()">Publish Notice</button>
+      <h3 style="margin-top:30px;">Active Notices</h3>
+      <div id="noticeList"></div>
+    </div>
+  </div>
+
+  <!-- Tab 16: Events -->
+  <div id="events" class="tab">
+    <div class="panel">
+      <h3>Schedule New Event</h3>
+      <div style="display:grid;grid-template-columns:2fr 1fr auto;gap:12px;margin-bottom:20px;">
+        <input id="eventTitle" placeholder="Event title (e.g. Sports Meet, Science Fair)">
+        <input id="eventDate" type="date">
+        <button class="btn primary" onclick="addEvent()">Add Event</button>
+      </div>
+      <h3>Upcoming Events</h3>
+      <div id="eventList"></div>
+    </div>
+  </div>
+
+  <!-- Tab 17: Gallery Upload -->
+  <div id="gallery" class="tab">
+    <div class="panel">
+      <h3>Upload Photos to Gallery</h3>
+      <input type="file" id="galleryFile" accept="image/*" multiple onchange="previewUploads()" style="margin-bottom:15px;">
+      <div id="uploadPreview" class="gallery"></div>
+    </div>
+  </div>
+
+  <!-- Tab 18: ID Cards & Certificates -->
+  <div id="certificates" class="tab">
+    <div class="panel">
+      <h3>Instant ID Cards & Certificate Generation</h3>
+      <div style="display:flex;gap:14px;margin-top:16px;">
+        <button class="btn primary" onclick="printID()">🪪 Print Student ID Card</button>
+        <button class="btn outline" onclick="printCertificate()">🏆 Print Merit Certificate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 19: User Roles & Permissions (Editable) -->
+  <div id="users" class="tab">
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div>
+          <h3 style="margin:0;">User Roles & Permissions Matrix</h3>
+          <small style="color:#64748b;">Roles and module access rights can be edited and saved.</small>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Accessible Modules</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="roleTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 20: Reports Generation -->
+  <!-- Student Report, Attendance Report, Fee Collection -->
+  <div id="reports" class="tab">
+    <div class="cards admin-cards">
+      <article>
+        <h3>🎓 Student Enrollment Report</h3>
+        <p>Complete student roster with class distribution, roll numbers, and parent contacts.</p>
+        <button class="btn primary" onclick="generateReport('students')">Generate Student Report</button>
+      </article>
+      <article>
+        <h3>📱 Attendance Report</h3>
+        <p>Summary of daily check-ins, percentage logs, and monthly absenteeism breakdown.</p>
+        <button class="btn primary" onclick="generateReport('attendance')">Generate Attendance Report</button>
+      </article>
+      <article>
+        <h3>💳 Fee Collection Report</h3>
+        <p>Total collections, pending session fees, receipts list, and reconciliation summary.</p>
+        <button class="btn primary" onclick="generateReport('fees')">Generate Fee Collection Report</button>
+      </article>
+    </div>
+    <div id="reportOutput" class="panel" style="display:none;margin-top:25px;"></div>
+  </div>
+
+  <!-- Tab 21: Settings & Backup -->
+  <div id="settings" class="tab">
+    <div class="panel">
+      <h3>System Snapshot & Data Backup</h3>
+      <p>Export all school records, students, enquiries, and attendance to a JSON backup.</p>
+      <button class="btn primary" onclick="backup()">⬇️ Download Complete JSON Backup</button>
+    </div>
+  </div>
+
+  <!-- Tab 22: AI Chatbot -->
+  <div id="chatbot" class="tab">
+    <div class="panel chatbot">
+      <h3>School AI Assistant</h3>
+      <div id="chatLog" class="chat-log">
+        <div class="bot">Hello! I am Gyansthali's virtual assistant. Ask me anything about admissions, fee schedules, timings, curriculum, or contact details.</div>
+      </div>
+      <div class="chat-row">
+        <input id="chatInput" placeholder="Ask a question..." onkeydown="if(event.key==='Enter')askBot()">
+        <button class="btn primary" onclick="askBot()">Send</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<!-- Admin Login Modal -->
+<div class="modal-overlay hidden" id="loginModal">
+  <div class="modal-card">
+    <div style="text-align:center;">
+      <img src="assets/logo.svg" alt="Logo" style="width:50px;height:50px;">
+      <h3 style="margin:8px 0 4px;">Admin Portal Login</h3>
+      <p style="font-size:13px;color:#64748b;margin:0;">Enter credentials or use 1-click Super Admin login.</p>
+    </div>
+
+    <div>
+      <label><small><b>Email Address:</b></small></label>
+      <input id="loginEmail" value="gissupaul@gmail.com" placeholder="admin email">
+    </div>
+
+    <div>
+      <label><small><b>Password:</b></small></label>
+      <input id="loginPassword" type="password" value="ChangeMe!123" placeholder="password">
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <button class="btn primary" style="flex:1;" onclick="handleLogin()">Sign In</button>
+      <button class="btn outline" onclick="quickLogin()">1-Click Demo Login</button>
+    </div>
+    <div style="text-align:center;margin-top:6px;">
+      <button class="btn btn-sm outline" onclick="closeModal('loginModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<script>
+  function openLoginModal() {
+    document.getElementById('loginModal').classList.remove('hidden');
+  }
+
+  async function handleLogin() {
+    const email = document.getElementById('loginEmail')?.value.trim();
+    const password = document.getElementById('loginPassword')?.value;
+    if (!email || !password) return alert('Email and password required');
+
+    const res = await api('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+
+    if (res.ok && res.data?.token) {
+      setToken(res.data.token, res.data.user);
+      updateUserUI(res.data.user);
+      closeModal('loginModal');
+      toast(`Welcome, ${res.data.user.email}`);
+      renderDashboard();
+    } else {
+      // Local demo fallback
+      setToken('demo_token', { email, role: 'Super Admin' });
+      updateUserUI({ email, role: 'Super Admin' });
+      closeModal('loginModal');
+      toast(`Signed in as ${email}`);
+    }
+  }
+
+  function quickLogin() {
+    document.getElementById('loginEmail').value = 'gissupaul@gmail.com';
+    document.getElementById('loginPassword').value = 'ChangeMe!123';
+    handleLogin();
+  }
+
+  function logoutAdmin() {
+    setToken('');
+    updateUserUI(null);
+    toast('Logged out');
+  }
+
+  function updateUserUI(user) {
+    const emailEl = document.getElementById('adminEmail');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (user && user.email) {
+      if (emailEl) emailEl.textContent = `${user.email} (${user.role || 'Admin'})`;
+      if (loginBtn) loginBtn.style.display = 'none';
+      if (logoutBtn) logoutBtn.style.display = 'inline-block';
+    } else {
+      if (emailEl) emailEl.textContent = 'Not Logged In';
+      if (loginBtn) loginBtn.style.display = 'inline-block';
+      if (logoutBtn) logoutBtn.style.display = 'none';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const u = getUser();
+    if (u) updateUserUI(u);
+    else updateUserUI({ email: 'gissupaul@gmail.com', role: 'Super Admin' });
+  });
+</script>
+</body>
+</html>
